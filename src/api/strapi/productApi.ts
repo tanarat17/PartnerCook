@@ -1,5 +1,8 @@
 // src/api/strapi/productApi.ts
 import { Product } from './types';
+import { sendMessageCreateProduct } from './lineBotService/serviceLineBotApi';
+
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1400'; // Fallback to default if env variable not set
 
@@ -72,7 +75,7 @@ export const getAllProductsByShopId = async (token: string, shopId: number): Pro
     }
 };
 
-export const addProduct = async (token: string, productData: Record<string, any>) => {
+export const addProduct = async (token: string, userId: string, productData: Record<string, any>) => {
     try {
         const url = `${API_URL}/api/products`;
 
@@ -92,6 +95,7 @@ export const addProduct = async (token: string, productData: Record<string, any>
         }
 
         const data = await response.json();
+        sendMessageCreateProduct(userId)
         return data; // คืนค่าผลลัพธ์จาก API
     } catch (error) {
         console.error('Error in addProduct function:', error);
@@ -99,7 +103,7 @@ export const addProduct = async (token: string, productData: Record<string, any>
     }
 };
 
-export const updateProduct = async (token: string, productId: number, productData: Record<string, any>) => {
+export const updateProduct = async (token: string, userId: string, productId: number, productData: Record<string, any>) => {
     try {
         const url = `${API_URL}/api/products/${productId}`; // ใช้ URL สำหรับการอัปเดต
 
@@ -132,7 +136,9 @@ export const updateProduct = async (token: string, productId: number, productDat
 
         const data = await response.json();
         console.log('Updated Product Data:', data);
+        sendMessageCreateProduct(userId);
         return data;
+
     } catch (error: any) {
         console.error('Error updating Product:', error.message);
         throw error;

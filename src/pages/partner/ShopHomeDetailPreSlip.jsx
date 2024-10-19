@@ -11,7 +11,7 @@ function ShopHomeDetailPreSlip() {
   const location = useLocation(); 
   const { customerRelation, totalPoints, status, invoice, productJsonArray, shop, date, time } = location.state || {}; 
 
-  // ตรวจสอบว่ามี productJsonArray หรือไม่
+  // ตรวจสอบว่ามี productJsonArray 
   const [items, setItems] = useState(productJsonArray || []); 
   
   // คำนวณมูลค่ารวม

@@ -155,10 +155,10 @@ export default function AddProduct() {
 
       let response;
       if (isEditing) {
-        response = await updateProduct(token, editProductId, productData);
+        response = await updateProduct(token, userId,editProductId, productData);
         setProducts((prev) => prev.map((p) => (p.id === editProductId ? response.data.data : p)));
       } else {
-        response = await addProduct(token, productData);
+        response = await addProduct(token, userId ,productData);
         setProducts((prevProducts) => [...prevProducts, response.data.data]);
         handleClose();
       }
