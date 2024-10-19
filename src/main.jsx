@@ -43,6 +43,7 @@ import ShopHomeDetail from './pages/partner/ShopHomeDetail.jsx';
 import ShopHomeDetailResive from './pages/partner/ShopHomeDetailResive.jsx';
 import ProfileStoreEdit from './pages/partner/ProfileStoreEdit.jsx';
 import ShopHomeDetailPreSlip from './pages/partner/ShopHomeDetailPreSlip.jsx';
+import { useLiff } from 'react-liff';
 
 
 // const cors = require("cors");
@@ -52,6 +53,10 @@ import ShopHomeDetailPreSlip from './pages/partner/ShopHomeDetailPreSlip.jsx';
 // 	methods:["GET","POST","PUT","DELETE"]
 // });
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337";
+const token = import.meta.env.VITE_TOKEN_TEST; 
+const LiffPartner = import.meta.env.VITE_LIFF_ID;
 
 
 const router = createBrowserRouter([
@@ -253,7 +258,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <LiffProvider liffId={liffId}>
+    <LiffProvider liffId={LiffPartner}>
       <CartProvider>
         <RouterProvider router={router} />
       </CartProvider>
