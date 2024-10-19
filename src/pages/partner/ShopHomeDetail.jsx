@@ -1,5 +1,4 @@
 import Header from "../../components/partner/Header";
-import { QrReader } from 'react-qr-reader';
 import { useState } from "react";
 import { Box, Card, CardContent, CardHeader, IconButton, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -68,13 +67,13 @@ function ShopHomeDetail() {
               }
             />
             <CardContent>
-              <QrReader
+              {/* <QrReader
                 delay={delay}
                 onError={handleError}
                 onResult={handleScan}
                 onLoad={() => setIsScanning(true)} 
                 sx={{ width: '100%', height: 'auto' }} 
-              />
+              /> */}
               {isScanning && (
                 <div style={{
                   position: 'absolute',

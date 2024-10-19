@@ -5,7 +5,6 @@ import { useLiff } from 'react-liff';
 import { useNavigate } from 'react-router-dom';
 import { loginWithLineId } from './api/business/login';
 import './App.css';
-import { BrowserMultiFormatReader } from '@zxing/library';
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337";
 const token = import.meta.env.VITE_TOKEN_TEST; 
