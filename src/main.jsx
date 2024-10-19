@@ -39,15 +39,10 @@ import Map from './pages/Map.jsx';
 import UpdateUserProfile from './pages/UpdateUserProfile.jsx';
 import CartSummary from './pages/CartSummary.jsx';
 import ShopHome from './pages/partner/shopHome.jsx';
-import ShopHomeDetail from './pages/partner/shopHomeDetail.jsx';
+import ShopHomeDetail from './pages/partner/ShopHomeDetail.jsx';
 import ShopHomeDetailResive from './pages/partner/ShopHomeDetailResive.jsx';
 import ProfileStoreEdit from './pages/partner/ProfileStoreEdit.jsx';
 import ShopHomeDetailPreSlip from './pages/partner/ShopHomeDetailPreSlip.jsx';
-
-
-
-const liffId = import.meta.env.VITE_LIFF_ID ;
-
 
 
 // const cors = require("cors");
