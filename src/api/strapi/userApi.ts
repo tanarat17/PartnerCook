@@ -3,13 +3,13 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1400';  // Fal
 import { User } from './types';
 export const updateUser = async (userId: number, userData: Record<string, any>, token: string) => {
     try {
-        const url = `${API_URL}/api/users/${userId}`;  
+        const url = `${API_URL}/api/users/${userId}`;  // Adjust the endpoint as per your API structure
 
         const response = await fetch(url, {
-            method: 'PUT',  
+            method: 'PUT',  // Use 'PATCH' if only partial updates are allowed by your API
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token}`,  // Include the JWT token in the Authorization header
             },
             body: JSON.stringify(userData),
         });
@@ -34,14 +34,17 @@ export const getUser = async (userId: string, token: string): Promise<User> => {
     }
 
     try {
-        const lowerCaseUserId = userId.toLowerCase(); 
+        // Use query parameters to filter by lineId if necessary
+        const lowerCaseUserId = userId.toLowerCase(); // แปลง userId เป็นตัวพิมพ์เล็ก
         console.log('lowerCaseUserId', lowerCaseUserId);
         const url = `${API_URL}/api/users?populate[photoImage]=true&filters[lineId][$eq]=${lowerCaseUserId}`;
+        // const url = `${API_URL}/api/users`;
+
 
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${token}`,  // Include the JWT token in the Authorization header
                 'Content-Type': 'application/json',
             },
         });
@@ -52,18 +55,20 @@ export const getUser = async (userId: string, token: string): Promise<User> => {
             throw new Error(`Request failed with status ${response.status}: ${errorData?.error?.message || 'Unknown error'}`);
         }
         const data = await response.json();
-        console.log('data', data); 
+        console.log('data', data); // Log to inspect the structure of the response
 
+        // Check if data.data exists and is an array
         if (!data || !Array.isArray(data)) {
             throw new Error('Invalid response format: Expected an array of user data.');
         }
 
         // // If data.data is an empty array
-        console.log('data.data.length', data.length); 
-        console.log('data[0].attributes.username', data[0].username);
+        console.log('data.data.length', data.length); // Log the data to check if it's an array
+        console.log('data[0].attributes.username', data[0].username); // Log the first item in the array to check the structure
         if (data.length === 0) {
             throw new Error('No user found with the provided lineId.');
         }
+        // Map over the data to create an array of User objects
         const user ={
             id: data[0].id,
             username: data[0].username,
@@ -79,7 +84,7 @@ export const getUser = async (userId: string, token: string): Promise<User> => {
             photoImage: data[0].photoImage,
         };
 
-        console.log('users', user);
+        console.log('users', user); // Log users to check if the mapping worked correctly
         return user;
 
     } catch (error: any) {
@@ -91,11 +96,12 @@ export const getUser = async (userId: string, token: string): Promise<User> => {
 export const createUser = async (userData: Record<string, any>, token: string): Promise<User> => {
     try {
         console.log('userData in createUser: ', userData);
-        const url = `${API_URL}/api/auth/local/register`;
+        const url = `${API_URL}/api/auth/local/register`;  // Adjust the endpoint as per your API structure
 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
+                 Authorization: `Bearer ${token}`,  // Include the JWT token in the Authorization header
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(userData),
