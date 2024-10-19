@@ -1,7 +1,7 @@
 // src/api/strapi/shopApi.ts
 import { Shop, Bank } from './types';
 import axios from 'axios';
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1400';  // Fallback to default if env variable not set
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1400';  
 
 export const getAllShops = async (token: string): Promise<Shop[]> => {
     if (!token) {
@@ -101,11 +101,6 @@ export const getShopById = async (token, userId) => {
       
   };
   
-
-
-
-
-
 export const createShop = async (token: string, shopData: Record<string, any>) => {
 
     try {
@@ -133,68 +128,6 @@ export const createShop = async (token: string, shopData: Record<string, any>) =
         throw error;
     }
 };
-
-
-// ฟังก์ชันสำหรับสร้าง Shop
-//  export const createShop = async (token: string, shopData: Record<string, any>) => {
-//     try {
-//         const url = `${API_URL}/api/shops`; // URL ของ API สำหรับสร้างร้านค้า
-
-//         const response = await fetch(url, {
-//             method: 'POST',
-//             headers: {
-//                 Authorization: `Bearer ${token}`,
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify(shopData), // ส่งข้อมูลร้านค้า
-//         });
-
-//         if (!response.ok) {
-//             const errorData = await response.json();
-//             throw new Error(`Error creating shop: ${errorData.message}`);
-//         }
-
-//         const data = await response.json();
-//                  return data;
-//     } catch (error) {
-//         console.error('Error creating shop:', error.message);
-//                  throw error;
-//     }
-// };
-
-
-// export const updateUserFromShop = async (token, userId, UserData: Record<string, any>) => {
-//     try {
-//         // กำหนด URL สำหรับอัพเดตผู้ใช้
-//         const url = `${API_URL}/api/users/${userId}`; 
-
-//         // ส่งคำขอ HTTP PUT เพื่ออัพเดต fullName, cardID, และ address (จาก location)
-//         const response = await fetch(url, {
-//             method: 'PUT',
-//             headers: {
-//                 Authorization: `Bearer ${token}`, // ส่ง token สำหรับการตรวจสอบสิทธิ์
-//                 'Content-Type': 'application/json', // กำหนดว่าเนื้อหาที่ส่งเป็น JSON
-//             },
-//             // body: JSON.stringify({ fullName, cardID, address: location }), // ส่ง fullName, cardID และ address (location) ในรูปแบบ JSON
-//             body: JSON.stringify({ data: UserData }),
-//         });
-
-
-//         console.log(response)
-//         // ตรวจสอบว่า response สำเร็จหรือไม่
-//         if (!response.ok) {
-//             const errorData = await response.json();
-//             throw new Error(`Error updating user: ${errorData.message}`);
-//         }
-
-//         const data = await response.json();
-//         console.log('UpdateUser ' + data)
-//         return data;
-//     } catch (error) {
-//         console.error('Failed to update user:', error);
-//         throw error; // ส่งต่อข้อผิดพลาด
-//     }
-// };
 
 
 export const updateUserFromShop = async (token: string,userId : string ,userData: Record<string, any>) => {
@@ -236,7 +169,6 @@ export const getAllShopById = async (token: string, shopId: number): Promise<Sho
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                // Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
@@ -248,9 +180,8 @@ export const getAllShopById = async (token: string, shopId: number): Promise<Sho
         }
 
         const data = await response.json();
-        console.log('Fetched Products Data:', data); // ตรวจสอบโครงสร้างข้อมูล
+        console.log('Fetched Products Data:', data); 
 
-        // สมมุติว่าโครงสร้างเป็น { data: [ ... ], meta: { ... } }
         if (!data.data || !Array.isArray(data.data)) {
             console.error('Fetched data is not an array:', data);
             throw new Error('Invalid data format');
@@ -296,24 +227,11 @@ export const getAllShopById = async (token: string, shopId: number): Promise<Sho
     }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 export const updateShop = async (token: string, shopId: number, shopData: Record<string, any>) => {
     try {
         const url = `${API_URL}/api/shops/${shopId}`;
-
         const response = await fetch(url, {
-            method: 'PUT',  // Use 'PATCH' if you only want to update certain fields
+            method: 'PUT', 
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',

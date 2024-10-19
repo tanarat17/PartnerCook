@@ -13,7 +13,7 @@ function ShopHomeDetail() {
     },
   });
 
-  const navigate = useNavigate(); // ใช้สำหรับการนำทาง
+  const navigate = useNavigate(); 
   const [result, setResult] = useState('No result');
   const [delay, setDelay] = useState(100);
   const [isScanning, setIsScanning] = useState(false);
@@ -25,7 +25,6 @@ function ShopHomeDetail() {
       try {
         const parsedData = JSON.parse(data);
 
-        // ส่งข้อมูลที่สแกนไปยังหน้า ShopHomeDetailResive
         navigate('/partner/ShopHomeDetailResive', { state: parsedData });
 
       } catch (error) {

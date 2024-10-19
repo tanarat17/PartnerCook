@@ -7,6 +7,9 @@ import { loginWithLineId } from './api/business/login';
 import './App.css';
 import { BrowserMultiFormatReader } from '@zxing/library';
 
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337";
+const token = import.meta.env.VITE_TOKEN_TEST; 
+const LiffPartner = import.meta.env.VITE_LIFF_ID;
 
 const App = () => {
     const navigate = useNavigate();
@@ -33,7 +36,7 @@ const App = () => {
                 }
 
                 // Initialize LIFF
-                await liff.init({ liffId: "2006448899-kaB4QBVr" });
+                await liff.init({ liffId: LiffPartner });
                 console.log("LIFF initialized successfully.");
 
                 if (liff.isLoggedIn()) {

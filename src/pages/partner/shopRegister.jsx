@@ -16,10 +16,6 @@ import { createUser } from "../../api/strapi/userApi"; // Import createUser func
 import { uploadImage } from "../../api/strapi/uploadApi"; // Import uploadImage function
 import { registerUser } from "../../api/strapi/authApi"; // Import uploadImage function
 
-
-
-
-
 function shopRegister() {
   const token = import.meta.env.VITE_TOKEN_TEST;
   const { userId } = useParams();

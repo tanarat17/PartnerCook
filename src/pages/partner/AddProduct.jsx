@@ -31,7 +31,10 @@ const style = {
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337";
 const token = import.meta.env.VITE_TOKEN_TEST;
 const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+console.log(user);
 const userId = user.id;
+const userLineId = user.lineId;
 
 export default function AddProduct() {
   const [open, setOpen] = useState(false);
@@ -155,10 +158,10 @@ export default function AddProduct() {
 
       let response;
       if (isEditing) {
-        response = await updateProduct(token, userId,editProductId, productData);
+        response = await updateProduct(token, userLineId,editProductId, productData);
         setProducts((prev) => prev.map((p) => (p.id === editProductId ? response.data.data : p)));
       } else {
-        response = await addProduct(token, userId ,productData);
+        response = await addProduct(token, userLineId ,productData);
         setProducts((prevProducts) => [...prevProducts, response.data.data]);
         handleClose();
       }

@@ -21,7 +21,6 @@ export const authenticateUser = async (identifier: string, password: string) => 
         });
 
         if (!response.ok) {
-            // Handle errors if the response status is not OK (e.g., 4xx or 5xx)
             const errorData = await response.json();
             console.error('Error:', errorData);
             throw new Error(`Request failed with status ${response.status}`);
@@ -51,7 +50,6 @@ export const registerUser = async (userData: Record<string, any>) => {
         });
 
         if (!response.ok) {
-            // Handle errors if the response status is not OK (e.g., 4xx or 5xx)
             const errorData = await response.json();
             console.error('Error:', errorData);
             throw new Error(`Request failed with status ${response.status}`);

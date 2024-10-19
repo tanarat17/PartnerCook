@@ -2,9 +2,7 @@
 import { Product } from './types';
 import { sendMessageCreateProduct } from './lineBotService/serviceLineBotApi';
 
-
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1400'; // Fallback to default if env variable not set
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1400'; 
 
 export const getAllProductsByShopId = async (token: string, shopId: number): Promise<Product[]> => {
     try {
@@ -15,7 +13,6 @@ export const getAllProductsByShopId = async (token: string, shopId: number): Pro
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                // Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
@@ -27,9 +24,8 @@ export const getAllProductsByShopId = async (token: string, shopId: number): Pro
         }
 
         const data = await response.json();
-        console.log('Fetched Products Data:', data); // ตรวจสอบโครงสร้างข้อมูล
+        console.log('Fetched Products Data:', data); 
 
-        // สมมุติว่าโครงสร้างเป็น { data: [ ... ], meta: { ... } }
         if (!data.data || !Array.isArray(data.data)) {
             console.error('Fetched data is not an array:', data);
             throw new Error('Invalid data format');
@@ -75,7 +71,7 @@ export const getAllProductsByShopId = async (token: string, shopId: number): Pro
     }
 };
 
-export const addProduct = async (token: string, userId: string, productData: Record<string, any>) => {
+export const addProduct = async (token: string, userLineId: string, productData: Record<string, any>) => {
     try {
         const url = `${API_URL}/api/products`;
 
@@ -95,20 +91,20 @@ export const addProduct = async (token: string, userId: string, productData: Rec
         }
 
         const data = await response.json();
-        sendMessageCreateProduct(userId)
-        return data; // คืนค่าผลลัพธ์จาก API
+        sendMessageCreateProduct(userLineId)
+        return data;
     } catch (error) {
         console.error('Error in addProduct function:', error);
-        throw error; // ส่งต่อข้อผิดพลาด
+        throw error; 
     }
 };
 
-export const updateProduct = async (token: string, userId: string, productId: number, productData: Record<string, any>) => {
+export const updateProduct = async (token: string, userLineId: string, productId: number, productData: Record<string, any>) => {
     try {
-        const url = `${API_URL}/api/products/${productId}`; // ใช้ URL สำหรับการอัปเดต
+        const url = `${API_URL}/api/products/${productId}`; 
 
         const response = await fetch(url, {
-            method: 'PUT', // หรือใช้ PATCH หากต้องการอัปเดตเฉพาะบางฟิลด์
+            method: 'PUT', 
             headers: {
                 // Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
@@ -136,7 +132,7 @@ export const updateProduct = async (token: string, userId: string, productId: nu
 
         const data = await response.json();
         console.log('Updated Product Data:', data);
-        sendMessageCreateProduct(userId);
+        sendMessageCreateProduct(userLineId);
         return data;
 
     } catch (error: any) {
@@ -144,58 +140,6 @@ export const updateProduct = async (token: string, userId: string, productId: nu
         throw error;
     }
 };
-
-
-
-export const saveProduct = async (token: string, productData: Record<string, any>) => {
-    try {
-        const url = `${API_URL}/api/products`; // URL สำหรับการเพิ่มหรืออัปเดตสินค้า
-
-        // สร้างข้อมูลที่จะส่งไปยัง API
-        const requestData = {
-            data: {
-                name: productData.name,
-                description: productData.description || "",
-                price: parseFloat(productData.price),
-                point: productData.point || 0,
-                approved: productData.approved || false,
-                numStock: parseInt(productData.numStock, 10),
-                type: productData.type,
-                shop: { id: productData.shopId },
-                image: productData.image ? [{ id: productData.image }] : [],
-            }
-        };
-
-        // หากมี productData.id แสดงว่าต้องการอัปเดตสินค้า
-        if (productData.id) {
-            requestData.data.id = productData.id; // เพิ่ม ID สำหรับการอัปเดต
-        }
-
-        const response = await fetch(url, {
-            method: 'POST', // ใช้ POST สำหรับการเพิ่มหรืออัปเดต
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`, // เพิ่ม Authorization ถ้าใช้ token
-            },
-            body: JSON.stringify(requestData),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Error saving product:', errorData);
-            throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('Saved Product Data:', data);
-        return data;
-    } catch (error: any) {
-        console.error('Error in saveProduct function:', error.message);
-        throw error;
-    }
-};
-
-
 
 
 

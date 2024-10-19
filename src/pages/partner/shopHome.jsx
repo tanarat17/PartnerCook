@@ -20,15 +20,15 @@ function ShopHome() {
     const fetchShops = async () => {
       try {
         setLoading(true);
-        const shopData = await getShopById(token, userId); // เรียก API
+        const shopData = await getShopById(token, userId); 
 
-        console.log('Fetched shop data:', shopData); // แสดงข้อมูลที่ได้รับจาก API
+        console.log('Fetched shop data:', shopData); 
 
         if (shopData && typeof shopData === 'object') {
-          setShops([shopData]); // ตั้งค่า shops ด้วยข้อมูลที่ได้รับ
+          setShops([shopData]); 
         } else {
           navigate('/ProfileStore');
-          setShops([]); // หาก shopData ไม่ถูกต้อง ให้ตั้งค่าเป็นอาเรย์ว่าง
+          setShops([]);
         }
       } catch (error) {
         setError(error.message);

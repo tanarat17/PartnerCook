@@ -11,7 +11,6 @@ import { uploadImage } from "../../api/strapi/uploadApi";
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 
-
 export default function ProfileStore() {
   const theme = createTheme({
     typography: {

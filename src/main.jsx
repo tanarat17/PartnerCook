@@ -254,14 +254,6 @@ const router = createBrowserRouter([
   //   element: <ShopHomeSlipSend />
   // },
 
-
-  
-
-
-
-
-
-
 ]);
 
 createRoot(document.getElementById('root')).render(
