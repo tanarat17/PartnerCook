@@ -1,0 +1,56 @@
+.switch {
+    width: 770px;
+    height: 87px;
+    background-color: rgba(190, 190, 190, 0.4);
+    display: flex;
+    justify-content: flex-start;
+    border-radius: 10px;
+    padding: 5px;
+    cursor: pointer;
+    position: relative; /* เพิ่มเพื่อใช้สำหรับการจัดตำแหน่งลูกศร */
+}
+
+.switch[data-Option='true'] {
+    justify-content: flex-end;
+}
+.handle {
+    width: 120px;
+    height: 75px;
+    background-color: rgba(245, 177, 29, 0.932);
+    border-radius: 10px;
+    display: flex; /* ใช้ flexbox เพื่อจัดตำแหน่งไอคอน */
+    justify-content: center; /* จัดกลางตามแนวนอน */
+    align-items: center; /* จัดกลางตามแนวตั้ง */
+}
+
+
+.arrow {
+    position: absolute; /* ใช้เพื่อจัดตำแหน่งลูกศร */
+    right: -30px; /* ปรับระยะห่างตามต้องการ */
+    top: 50%; /* จัดกลางตามแนวตั้ง */
+    transform: translateY(-50%); /* จัดกลางตามแนวตั้ง */
+    font-size: 24px; /* ขนาดของลูกศร */
+    transition: opacity 0.3s; /* เพิ่มการเปลี่ยนแปลงแบบนุ่มนวล */
+}
+
+.switch[data-Option='false'] .arrow {
+    opacity: 0; /* ซ่อนลูกศรเมื่อ toggledOn เป็น false */
+}
+
+@font-face {
+    font-family: 'Sarabun';
+    src: url('../../../../assets/fonts/Sarabun-Medium.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    
+}
+  .title {
+    font-family: 'Sarabun', sans-serif;
+    font-size: 36px;
+    color: #333;
+  }
+  

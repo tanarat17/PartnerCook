@@ -1,0 +1,143 @@
+/* ปรับ container เพื่อรองรับ responsive layout */
+.appointment-container {
+    width: 100%;
+    padding: 20px;
+    background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    background-color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.menu h1 {
+    font-size: 16px;
+    color: #ff5733;
+}
+
+.menu-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* ปรับ search bar ให้ responsive */
+.search-bar {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.search-bar input {
+    width: 80%;
+    padding: 10px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.search-button {
+    background-color: #28a745;
+    border: none;
+    padding: 10px;
+    border-radius: 25px;
+    color: white;
+    margin-left: -50px;
+    cursor: pointer;
+}
+
+/* ปรับ card ให้อยู่ตรงกลางและขยายขนาดได้ตามหน้าจอ */
+.appointment-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px;
+    text-align: left;
+}
+
+.appointment-card p {
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+/* ปุ่มแสดงรายละเอียด */
+.details-button {
+    background-color: #ffc107;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 14px;
+}
+
+/* สไตล์ของ status */
+.status {
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.status.confirmed {
+    background-color: #28a745;
+    color: white;
+}
+
+.status.pending {
+    background-color: #dc3545;
+    color: white;
+}
+
+.status.unknown {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .appointment-container {
+        padding: 10px;
+    }
+
+    .menu h1 {
+        font-size: 14px;
+    }
+
+    .search-bar input {
+        font-size: 12px;
+    }
+
+    .appointment-card p {
+        font-size: 12px;
+    }
+
+    .details-button {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-bar input {
+        width: 70%;
+    }
+
+    .search-button {
+        margin-left: -30px;
+    }
+}

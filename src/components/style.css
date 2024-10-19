@@ -1,0 +1,121 @@
+nav {
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.06);
+    transition: 0.3s ease-in-out;
+}
+
+#navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+li a:hover {
+    color: #FBB615; /* สีเมื่อเลื่อนเมาส์เหนือ */
+}
+
+li {
+    padding: 0 20px;
+    position: relative;
+}
+
+.active {
+    color: #FBB615; /* สีสำหรับลิงก์ที่ใช้งานอยู่ */
+}
+
+#mobile {
+    display: none; /* ซ่อนปุ่มมือถือโดยเริ่มต้น */
+}
+
+#mobile i {
+    color: #007F00; /* สีสำหรับไอคอนมือถือ */
+}
+
+.profile-picture {
+    display: none; /* ซ่อนรูปโปรไฟล์ */
+}
+
+.input-username:active {
+    background-color: white !important; /* สีพื้นหลังของ input เมื่อ active */
+}
+
+/* Media Queries */
+@media screen and (max-width: 769px) {
+    #navbar {
+        display: flex;
+        flex-direction: column; /* แสดงแนวตั้งสำหรับมือถือ */
+        align-items: flex-start;
+        justify-content: flex-start;
+        position: fixed;
+        top: 90px;
+        right: -330px; /* เริ่มต้นซ่อนไว้ */
+        width: 330px;
+        height: 100vh;
+        background-color: #fff;
+        box-shadow: 0 40px 60px rgba(255, 255, 255, 0.1);
+        padding: 40px 0;
+        transition: 0.3s ease-in-out;
+        z-index: 111111;
+    }
+
+    #navbar.open {
+        right: 0px; /* แสดง navbar เมื่อเปิด */
+    }
+
+    #navbar li {
+        margin-top: 2rem; /* ระยะห่างระหว่างรายการ */
+    }
+
+    #navbar li a.fontSize {
+        font-size: 1.1rem; /* ขนาดตัวอักษรสำหรับมือถือ */
+        text-align: left; /* จัดเรียงข้อความให้ชิดซ้าย */
+    }
+
+    #navbar li a::before {
+        content: "\203A"; /* ใช้ลูกศรก่อนข้อความ */
+        font-size: 2.5rem;
+        position: relative;
+        top: 4px;
+        padding-right: 4px; /* ระยะห่างขวาของลูกศร */
+    }
+
+    #mobile {
+        display: block; /* แสดงปุ่มมือถือเมื่อหน้าจอเล็ก */
+    }
+
+    #mobile i {
+        font-size: 24px; /* ขนาดไอคอนมือถือ */
+        cursor: pointer; /* แสดงเคอร์เซอร์เมื่อชี้ */
+        position: relative;
+        left: 2rem; /* ระยะห่างทางซ้าย */
+    }
+}
+
+
+.modal {
+    z-index: 1000; /* ตั้งค่าให้สูงกว่า SweetAlert */
+  }
+  
+  .sweet-alert {
+    z-index: 900; /* ตั้งค่าให้ต่ำกว่า Modal */
+  }
+
+  .swal2-container {
+    /* ตรวจสอบว่าไม่มีการกำหนด margin, position หรือ transform ที่ทำให้โมดัลเบี่ยงไปจากกลาง */
+    margin: auto;
+    position: fixed; /* ต้องเป็น fixed เพื่อให้แสดงอยู่กลางจอ */
+}
+
+.spacing {
+    margin-top: 16px; /* กำหนดระยะห่างที่ต้องการ */
+  }
+
+
+  .red-button {
+    background-color: red;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
