@@ -101,7 +101,7 @@ export const createUser = async (userData: Record<string, any>, token: string): 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                 Authorization: `Bearer ${token}`,  // Include the JWT token in the Authorization header
+                //  Authorization: `Bearer ${token}`,  // Include the JWT token in the Authorization header
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(userData),

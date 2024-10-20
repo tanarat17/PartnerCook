@@ -1,5 +1,5 @@
 // src/api/strapi/shopApi.ts
-import { Shop, Bank } from './types';
+import { Shop, Bank, Product } from './types';
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1400';  
 
@@ -131,7 +131,7 @@ export const createShop = async (token: string, shopData: Record<string, any>) =
 
 
 export const updateUserFromShop = async (token: string,userId : string ,userData: Record<string, any>) => {
-
+    console.log(userId);
     try {
         const url = `${API_URL}/api/users/${userId}`; 
 
@@ -256,15 +256,15 @@ export const updateShop = async (token: string, shopId: number, shopData: Record
 
 
 export const getBank = async (token: string): Promise<Bank[]> => {
-    if (!token) {
-        throw new Error('No token provided. User must be authenticated.');
-    }
+    // if (!token) {
+    //     throw new Error('No token provided. User must be authenticated.');
+    // }
     try {
         const url = `${API_URL}/api/banks`; 
         const response = await fetch(url, {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${token}`,
+                // Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
         });
@@ -289,6 +289,8 @@ export const getBank = async (token: string): Promise<Bank[]> => {
             publishedAt: item.attributes.publishedAt,
         }));
 
+
+        console.log(banksData)
         return banksData;
     } catch (error) {
         console.error('Error fetching banks:', error.message);

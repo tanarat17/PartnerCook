@@ -31,7 +31,7 @@ const Login = () => {
                     if (response) {
                         navigate('/partner/shopHome');  // เปลี่ยนเส้นทางไปยังหน้า home
                     } else {
-                        navigate('/Profilestore');  // เปลี่ยนเส้นทางไปยังหน้า Register
+                        navigate('/partner/Profilestore');  // เปลี่ยนเส้นทางไปยังหน้า Register
                     }
                 } else {
                     liff.login();

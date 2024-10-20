@@ -40,6 +40,9 @@ export default function ProfileStore() {
   const [banks, setBanks] = useState([]); // สำหรับเก็บข้อมูลธนาคาร
   const [loading, setLoading] = useState(true);
 
+
+
+  console.log("Front : ",user);
   const handleInputChange = (e) => {
     const { id, name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -75,6 +78,8 @@ useEffect(() => {
 useEffect(() => {
 }, [banks]);
 
+
+console.log("Bank",banks)
   const handleCaptureBookBankImage = (imageFile) => {
     if (imageFile) {
       setFormData((prevData) => ({
