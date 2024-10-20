@@ -256,7 +256,7 @@ console.log("Bank",banks)
               />
             </div>
             
-            <div className="w-full md:w-1/2 px-2 mt-4">
+            {/* <div className="w-full md:w-1/2 px-2 mt-4">
               <FormControl fullWidth>
                 <InputLabel id="bank-select-label">ธนาคาร</InputLabel>
                 <Select
@@ -272,13 +272,59 @@ console.log("Bank",banks)
                   ) : (
                     banks.map((bank) => (
                       <MenuItem key={bank.id} value={bank.id}>
-                        {bank.name} {/* แสดงชื่อธนาคาร */}
+                        {bank.name} 
                       </MenuItem>
                     ))
                   )}
                 </Select>
               </FormControl>
+            </div> */}
+
+        <div className="w-full md:w-1/2 px-2 mt-4">
+              <FormControl fullWidth>
+                <InputLabel id="bank-select-label">ธนาคาร</InputLabel>
+                <Select
+                  className="bg-white"
+                  labelId="bank-select-label"
+                  id="bankChoose"
+                  value={formData.bank}
+                  label="ธนาคาร"
+                  onChange={handleSelectChange}
+                >
+                  {/* Add all bank options here */}
+                  <MenuItem value="3">ธนาคารกรุงเทพ จำกัด (มหาชน) (Bangkok Bank Public Company Limited)</MenuItem>
+                  <MenuItem value="4">ธนาคารกรุงไทย จำกัด (มหาชน) (Krungthai Bank Public Company Limited)</MenuItem>
+                  <MenuItem value="5">ธนาคารกรุงศรีอยุธยา จำกัด (มหาชน) (Bank of Ayudhya Public Company Limited - Krungsri)</MenuItem>
+                  <MenuItem value="6">ธนาคารกสิกรไทย จำกัด (มหาชน) (Kasikornbank Public Company Limited)</MenuItem>
+                  <MenuItem value="7">ธนาคารซีไอเอ็มบี ไทย จำกัด (มหาชน) (CIMB Thai Bank Public Company Limited)</MenuItem>
+                  <MenuItem value="8">ธนาคารทหารไทยธนชาต จำกัด (มหาชน) (TMBThanachart Bank Public Company Limited - TTB Bank)</MenuItem>
+                  <MenuItem value="9">ธนาคารทิสโก้ จำกัด (มหาชน) (TISCO Bank Public Company Limited)</MenuItem>
+                  <MenuItem value="10">ธนาคารไทยเครดิต จำกัด (มหาชน) (Thai Credit Retail Bank Public Company Limited)</MenuItem>
+                  <MenuItem value="11">ธนาคารไทยพาณิชย์ จำกัด (มหาชน) (Siam Commercial Bank Public Company Limited - SCB)</MenuItem>
+                  <MenuItem value="12">ธนาคารยูโอบี จำกัด (มหาชน) (United Overseas Bank - Thai - Public Company Limited - UOB)</MenuItem>
+                  <MenuItem value="13">ธนาคารแลนด์ แอนด์ เฮ้าส์ จำกัด (มหาชน) (Land and Houses Bank Public Company Limited)</MenuItem>
+                  <MenuItem value="14">ธนาคารสแตนดาร์ดชาร์เตอร์ด (ไทย) จำกัด (มหาชน) (Standard Chartered Bank - Thai - Public Company Limited)</MenuItem>
+                  <MenuItem value="15">ธนาคารไอซีบีซี (ไทย) จำกัด (มหาชน) (Industrial and Commercial Bank of China - Thai - Public Company Limited - ICBC)</MenuItem>
+                  <MenuItem value="16">ธนาคารแห่งประเทศจีน (ไทย) จำกัด (มหาชน) (Bank of China - Thai - Public Company Limited)</MenuItem>
+                </Select>
+              </FormControl>
             </div>
+
+
+{/* 3 Bangkok Bank Public Company Limited
+4 Krungthai Bank Public Company Limited
+5 Bank of Ayudhya Public Company Limited (Krungsri)
+6 Kasikornbank Public Company Limited
+7 CIMB Thai Bank Public Company Limited
+8 TMBThanachart Bank Public Company Limited (TTB Bank)
+9 TISCO Bank Public Company Limited
+10 Thai Credit Retail Bank Public Company Limited
+11 Siam Commercial Bank Public Company Limited (SCB)
+12 United Overseas Bank (Thai) Public Company Limited (UOB)
+13 Land and Houses Bank Public Company Limited
+14 Standard Chartered Bank (Thai) Public Company Limited
+15 Industrial and Commercial Bank of China (Thai) Public Company Limited (ICBC)
+16 Bank of China (Thai) Public Company Limited */}
             
             <div className="w-full px-2 mt-4">
               <div>
