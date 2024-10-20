@@ -4,6 +4,7 @@ import { Box, Card, CardContent, CardHeader, IconButton, Typography } from '@mui
 import CloseIcon from '@mui/icons-material/Close';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import QrScanner from 'react-qr-scanner'; // นำเข้า QrScanner จาก react-qr-scanner
 
 function ShopHomeDetail() {
   const theme = createTheme({
@@ -14,24 +15,61 @@ function ShopHomeDetail() {
 
   const navigate = useNavigate(); 
   const [result, setResult] = useState('No result');
-  const [delay, setDelay] = useState(100);
   const [isScanning, setIsScanning] = useState(false);
+
+  // const handleScan = (data) => {
+  //   if (data) {
+  //     setIsScanning(false);
+
+  //     try {
+  //       const parsedData = JSON.parse(data);
+  //       navigate('/partner/ShopHomeDetailResive', { state: parsedData });
+
+  //     } catch (error) {
+  //       console.error("Error parsing QR code data:", error);
+  //       setResult("ไม่สามารถอ่านข้อมูล QR Code ได้");
+  //     }
+  //   }
+  // };
 
   const handleScan = (data) => {
     if (data) {
       setIsScanning(false);
-
+  
+      console.log("QR Code data:", data);
+  
       try {
-        const parsedData = JSON.parse(data);
-
-        navigate('/partner/ShopHomeDetailResive', { state: parsedData });
-
+        // เข้าถึงเฉพาะค่า `text` จาก data
+        let formattedData = data.text;
+  
+        // ทำการ clean escape characters
+        if (typeof formattedData === "string") {
+          // ทำการลบ escape characters และทำความสะอาดข้อมูล
+          formattedData = formattedData
+            .replace(/\\"/g, '"')       // แทนที่ \\" ด้วย "
+            .replace(/^"|"$/g, '')      // ลบ " ที่อยู่ข้างหน้าและข้างหลังของข้อมูล
+            .replace(/\\+/g, '');       // ลบ \ ทั้งหมด
+        
+          console.log("Formatted Data after cleaning:", formattedData);
+          
+          // ส่งข้อมูลแบบ string โดยไม่แปลงเป็น JSON
+          navigate('/partner/ShopHomeDetailResive', { state: { rawData: formattedData } });
+        }
+        
+         else {
+          setResult("QR Code ไม่ใช่ JSON format");
+        }
       } catch (error) {
         console.error("Error parsing QR code data:", error);
         setResult("ไม่สามารถอ่านข้อมูล QR Code ได้");
       }
     }
   };
+  
+  
+  
+  
+  
 
   const handleError = (err) => {
     console.error(err);
@@ -39,6 +77,11 @@ function ShopHomeDetail() {
 
   const handleClose = () => {
     console.log("Card closed");
+  };
+
+  const previewStyle = {
+    height: 240,
+    width: 320,
   };
 
   return (
@@ -67,13 +110,13 @@ function ShopHomeDetail() {
               }
             />
             <CardContent>
-              {/* <QrReader
-                delay={delay}
+              <QrScanner
+                delay={300}
                 onError={handleError}
-                onResult={handleScan}
-                onLoad={() => setIsScanning(true)} 
-                sx={{ width: '100%', height: 'auto' }} 
-              /> */}
+                onScan={handleScan}
+                style={previewStyle}
+              />
+              
               {isScanning && (
                 <div style={{
                   position: 'absolute',

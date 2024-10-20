@@ -5,6 +5,7 @@ import { Box, Card, CardContent, CardHeader, IconButton, Table, TableBody, Table
 import CloseIcon from '@mui/icons-material/Close';
 import { motion } from "framer-motion";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'; 
+
 import "./css/Togle.css";
 
 function ShopHomeDetailPreSlip() {

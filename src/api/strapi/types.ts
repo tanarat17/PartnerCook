@@ -79,3 +79,27 @@ export interface User {
     publishedAt: string;
 }
   
+
+export interface Redeem {
+  customer: User; 
+  totalPoints: number;
+  qrCode: string; 
+  status: 'pending' | 'completed' | 'canceled'; 
+  invoice: Invoice; 
+  productJsonArray: Record<string, any>[]; 
+  shop: Shop;
+  date: string; 
+  time: string; 
+}
+
+
+export interface Invoice {
+  id: number; 
+  amount: number; 
+  status: 'pending' | 'paid' | 'canceled'; 
+  //transferImage: Media;
+  redeem: Redeem;
+  productJsonArray: Record<string, any>[];
+  invoiceNumber: string;
+  shop: Shop;
+}

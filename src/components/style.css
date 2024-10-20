@@ -119,3 +119,28 @@ li {
     cursor: pointer;
   }
   
+
+
+
+  .switch {
+    display: flex;
+    align-items: center;
+    width: 100px; /* ความกว้างของ switch */
+    height: 50px; /* ความสูงของ switch */
+    border-radius: 25px;
+    cursor: pointer;
+    position: relative;
+    background-color: #ccc; /* สีพื้นฐาน */
+  }
+  
+  .handle {
+    width: 45px; /* ความกว้างของ handle */
+    height: 45px; /* ความสูงของ handle */
+    border-radius: 50%;
+    position: absolute;
+    top: 2.5px; /* เพื่อให้ handle อยู่กลาง switch */
+    transition: background-color 0.3s ease;
+  }
+
+  
+  

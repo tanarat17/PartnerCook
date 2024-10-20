@@ -175,3 +175,63 @@ export const getShopId = async (token: string, shopName: string): Promise<number
         throw error;
     }
 };
+
+
+// src\api\strapi\productApi.ts
+export const getProductByID = async (token: string, userLineId: number, productId: number, productData: Record<string, any>) => {
+    try {
+        console.log("getProductByID", productId);
+        const url = `${API_URL}/api/products/${productId}`;
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                // Authorization: `Bearer ${token}`, // ใช้ token ถ้าจำเป็น
+                'Content-Type': 'application/json',
+            },
+        });
+    
+    
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error fetching ProductByID ID:', errorData);
+            throw new Error(`Request failed with status ${response.status}: ${errorData.message || 'Unauthorized'}`);
+        }
+    
+        // ดึงข้อมูล JSON
+        const data = await response.json();
+        console.log("Response:", data);
+    
+        // ตรวจสอบและจัดการข้อมูล
+        if (data.data) {
+            const product = data.data; // ข้อมูลผลิตภัณฑ์
+        
+            // ดึงข้อมูลจาก attributes
+            const attributes = product.attributes || {}; // ถ้า attributes ไม่มี ให้ใช้ object ว่าง
+            const id = product.id || 'ID ไม่ระบุ'; // ตรวจสอบ ID
+            const name = attributes.name || 'ชื่อไม่ระบุ'; // ตรวจสอบชื่อ
+            const description = attributes.description || 'ไม่มีคำอธิบาย'; // ตรวจสอบคำอธิบาย
+            const price = attributes.price !== undefined ? attributes.price : 'ไม่มีราคา'; // ตรวจสอบราคา
+            const numStock = attributes.numStock !== undefined ? attributes.numStock : 'ไม่มีข้อมูลจำนวนในสต็อก'; // ตรวจสอบจำนวนในสต็อก
+            const approved = attributes.approved !== undefined ? attributes.approved : 'สถานะไม่ระบุ'; // ตรวจสอบสถานะการอนุมัติ
+        
+            // แสดงผลข้อมูล
+            console.log(`Product ID: ${id}`);
+            console.log(`Product Name: ${name}`);
+            console.log(`Description: ${description}`);
+            console.log(`Price: ${price}`);
+            console.log(`Number in Stock: ${numStock}`);
+            console.log(`Approved: ${approved}`);
+        
+            // ส่งค่าที่ต้องการกลับ
+            return { id, name, description, price, numStock, approved }; 
+        } else {
+            console.warn('No ProductByID found with the provided ID.');
+            return null;
+        }
+        
+    } catch (error) {
+        console.error('Error fetching ProductByID:', error.message);
+        throw error; // ถ้ามีข้อผิดพลาด ให้โยนออกมาเพื่อจัดการต่อ
+    }
+    
+};

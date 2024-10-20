@@ -359,21 +359,23 @@ export default function AddProduct() {
                 <div className="grid grid-cols-3 gap-4">
                   {/* สี่เหลี่ยมสถานะการอนุมัติ */}
                   <div
-                    className={`absolute top-2 right-2 px-3 py-1 text-white font-bold rounded-md ${product.approved ? 'bg-green-500' : 'bg-yellow-500'
-                      }`}
-                    title={product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
-                  >
-                    {product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
-                  </div>
+                  className={`absolute top-2 right-2 px-3 py-1 text-white font-bold rounded-md ${
+                    product.approved ? 'bg-green-500' : 'bg-yellow-500'
+                  }`}
+                  title={product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
+                >
+                  {product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
+                </div>
 
-                  {/* ปุ่มแก้ไข */}
-                  <button
-                    className="absolute top-2 right-24 px-3 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-700"
-                    onClick={() => handleEdit(product)} // เรียกใช้ฟังก์ชัน handleEdit เมื่อคลิก
-                    title="แก้ไขสินค้า"
-                  >
-                    แก้ไข
-                  </button>
+                {/* ปุ่มแก้ไข */}
+                <button
+                  className="absolute top-2 right-28 px-3 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-700" // ปรับค่า right ที่นี่
+                  onClick={() => handleEdit(product)} // เรียกใช้ฟังก์ชัน handleEdit เมื่อคลิก
+                  title="แก้ไขสินค้า"
+                >
+                  แก้ไข
+                </button>
+
 
                   <div>
                     {/* ตรวจสอบว่ามี image หรือไม่ */}

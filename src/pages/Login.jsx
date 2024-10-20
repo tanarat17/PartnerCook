@@ -29,9 +29,9 @@ const Login = () => {
 
                     const response = await handleLineLogin(profileData);
                     if (response) {
-                        navigate('/partner/Profilestore');  // เปลี่ยนเส้นทางไปยังหน้า home
+                        navigate('/partner/shopHome');  // เปลี่ยนเส้นทางไปยังหน้า home
                     } else {
-                        navigate('/register');  // เปลี่ยนเส้นทางไปยังหน้า Register
+                        navigate('/Profilestore');  // เปลี่ยนเส้นทางไปยังหน้า Register
                     }
                 } else {
                     liff.login();

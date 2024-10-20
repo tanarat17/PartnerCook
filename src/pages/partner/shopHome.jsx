@@ -13,6 +13,7 @@ function ShopHome() {
   const token = localStorage.getItem('accessToken') || import.meta.env.VITE_TOKEN_TEST;
   const users = JSON.parse(localStorage.getItem('user') || '{}');
   const userId = users.id;
+  const PicLineUser = users.pictureUrl;
 
   const navigate = useNavigate();
 
@@ -39,7 +40,7 @@ function ShopHome() {
 
     fetchShops();
   }, [token, userId]);
-
+console.log(PicLineUser);
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
