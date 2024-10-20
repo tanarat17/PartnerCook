@@ -1,88 +1,124 @@
+import React, { useState, useEffect } from "react";
+import Container from "@mui/material/Container";
 import Header from "../../components/partner/Header";
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Box, Card, CardContent, CardHeader, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+import { Box, Card, CardContent, CardHeader, IconButton, Typography, Button, Grid, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { motion } from "framer-motion";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'; 
-
-import "./css/Togle.css";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 function ShopHomeDetailPreSlip() {
-  const location = useLocation(); 
-  const { customerRelation, totalPoints, status, invoice, productJsonArray, shop, date, time } = location.state || {}; 
 
-  // ตรวจสอบว่ามี productJsonArray 
-  const [items, setItems] = useState(productJsonArray || []); 
-  
-  // คำนวณมูลค่ารวม
-  const totalValue = items.reduce((sum, item) => {
-    const itemValue = Number(item.value) || 0; // แปลงเป็นตัวเลข
-    return sum + (itemValue * item.quantity); 
-  }, 0);
-  const [toggledOn, setToggledOn] = useState(false); 
-  const toggleSwitch = () => {
-    setToggledOn(!toggledOn);
+  const theme = createTheme({
+    typography: {
+      fontFamily: "Sarabun !important",
+    },
+  });
+
+  const [invoices, setInvoices] = useState([
+    {
+      id: 1,
+      invoiceNumber: "P0001",
+      customerName: "Christian Walton",
+      date: "7 สิงหาคม 2567 เวลา 18:35 น.",
+      status: "paid",
+    },
+    {
+      id: 2,
+      invoiceNumber: "P0002",
+      customerName: "เด็กหอม",
+      date: "8 สิงหาคม 2567 เวลา 19:00 น.",
+      status: "unpaid",
+    }
+  ]);
+
+  const [searchQuery, setSearchQuery] = useState(""); // สถานะสำหรับเก็บคำค้นหา
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
   };
-  const handleClose = () => {
-    console.log("Card closed");
-  };
+
+  // ฟังก์ชันกรองรายการที่ค้นหา
+  const filteredInvoices = invoices.filter(
+    (invoice) =>
+      invoice.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      invoice.customerName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // const theme = createTheme({
+  //   typography: {
+  //     fontFamily: "Sarabun !important",
+  //   },
+  // });
 
   return (
-    <>
+    
+        <ThemeProvider theme={theme}>
+
       <Header />
-      <Box display="flex" justifyContent="center" alignItems="center" style={{ minHeight: '40vh', marginBottom: '30px' }}>
-        <Card style={{ width: '80%', maxWidth: '800px' }}>
-          <CardHeader 
-            style={{ backgroundColor: '#800020', color: 'white' }}
-            action={
-              <IconButton onClick={handleClose} style={{ color: 'white' }}>
-                <CloseIcon />
-              </IconButton>
-            }
+      <Box sx={{ p: 2 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 0 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* ช่องค้นหา */}
+          <TextField
+            label="ค้นหาใบแจ้งหนี้..."
+            variant="outlined"
+            fullWidth
+            value={searchQuery}
+            onChange={handleSearchChange} // เมื่อเปลี่ยนค่าค้นหา
+            sx={{ 
+              mb: 2,  // เพิ่มระยะห่างจากขอบล่าง
+              backgroundColor: 'white' // พื้นหลังสีขาว
+            }}
           />
-          <CardContent>
-            <Typography variant="h6" sx={{ textAlign: 'center', marginBottom: '16px', fontFamily: 'Sarabun' }}>
-              {/* ลูกค้า: {customerRelation}, คะแนน: {totalPoints}, สถานะ: {status} */}
-            </Typography>
-            <TableContainer sx={{ marginBottom: '24px' }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ textAlign: 'left', fontFamily: 'Sarabun, sans-serif', fontSize: '16px' }}>
-                      รายการสินค้า
-                    </TableCell>
-                    <TableCell sx={{ textAlign: 'center', fontFamily: 'Sarabun, sans-serif', fontSize: '16px' }}>
-                      จำนวน
-                    </TableCell>
-                    <TableCell sx={{ textAlign: 'left', fontFamily: 'Sarabun, sans-serif', fontSize: '16px' }}>
-                      มูลค่า (บาท)
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-              {items.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell sx={{ textAlign: 'left', fontFamily: 'Sarabun, sans-serif', fontSize: '14px' }}>
-                    {item.productId}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: 'center', fontFamily: 'Sarabun, sans-serif', fontSize: '14px' }}>
-                    {item.quantity}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: 'left', fontFamily: 'Sarabun, sans-serif', fontSize: '14px' }}>
-                    {item.value !== undefined && item.value !== null && !isNaN(item.value)
-                      ? `${Number(item.value).toLocaleString()} บาท`
-                      : 'ไม่มีราคา'}
-                  </TableCell>
-                </TableRow>
-              ))}
-              </TableBody>
-              </Table>
-            </TableContainer>
-          </CardContent>
-        </Card>
+
+
+          <Grid container spacing={2}>
+            {filteredInvoices.map((invoice) => (
+              <Grid item xs={12} md={6} lg={4} key={invoice.id}>
+                <Card>
+                  <CardHeader
+                    action={
+                      <IconButton aria-label="close">
+                        <CloseIcon />
+                      </IconButton>
+                    }
+                    title={`เลขที่ใบแจ้งหนี้: ${invoice.invoiceNumber}`}
+                  />
+                  <CardContent>
+                    <Typography variant="body1">
+                      ชื่อ: {invoice.customerName}
+                    </Typography>
+                    <Typography variant="body1">
+                      วันที่: {invoice.date}
+                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                      <Button variant="contained" color="warning">
+                        ดูใบเสร็จ
+                      </Button>
+                      {invoice.status === "paid" ? (
+                        <Button variant="contained" color="success" >
+                          ชำระเงินแล้ว
+                        </Button>
+                      ) : (
+                        <Button variant="outlined" color="error">
+                          ค้างชำระ
+                        </Button>
+                      )}
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </motion.div>
       </Box>
-    </>
+      </ThemeProvider>
+
   );
 }
 

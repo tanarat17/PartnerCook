@@ -1,15 +1,16 @@
 // src/pages/partner/AddProduct.jsx
 import React, { useState, useEffect } from "react";
 import Header from "../../components/partner/Header";
-import { FaPlus, FaRegSave } from "react-icons/fa";
+import { FaPlus, FaRegSave ,FaEdit } from "react-icons/fa";
 import Container from "@mui/material/Container";
 import Modal from "@mui/material/Modal";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import WebcamCapture from "../../components/WebcamCapture";
 import onion from "../../assets/images/onion.png";
-import { Grid, TextField } from "@mui/material";
+import { Grid, TextField, Button } from "@mui/material";
 import Swal from "sweetalert2";
+
 import {
   addProduct,
   getAllProductsByShopId,
@@ -231,126 +232,108 @@ export default function AddProduct() {
   }
 
   return (
-    <>
-      <ThemeProvider theme={theme}>
-        <Header />
-        <Container maxWidth="sm">
-          <div className="flex flex-row">
-            <div className="basis-6/12"></div>
-            <div
-              onClick={handleOpen}
-              className="basis-6/12 bg-green-hard-bg w-36 h-12 flex justify-center items-center rounded-md mt-5 ml-10 cursor-pointer"
-            >
-              <FaPlus className="text-2xl text-white" />
-              <span className="text-white pl-3">เพิ่มสินค้า</span>
-            </div>
-          </div>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            sx={{ zIndex: 1000 }}
+    <ThemeProvider theme={theme}>
+      <Header />
+    <Container maxWidth="md"> 
+    <Grid container justifyContent="flex-end" style={{ marginTop: '16px' }}>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<FaPlus />}
+            onClick={handleOpen}
           >
-            <Box
-              sx={{
-                ...style,
-                border: '0.1px solid #ccc', // กำหนดขอบ
-                borderRadius: '8px', // รัศมีของมุมขอบ
-                boxShadow: 2, // เพิ่มเงา
-                pointerEvents: open ? 'auto' : 'none',
-              }}
-              tabIndex={open ? 0 : -1}
-            >
-              {/* Form Fields */}
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                ชื่อสินค้า
-              </label>
+            เพิ่มสินค้า
+          </Button>
+        </Grid>
+      </Grid>
+
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={{ ...style, borderRadius: '8px', boxShadow: 2 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 id="name"
+                label="ชื่อสินค้า"
                 variant="outlined"
                 value={form.name || ""}
                 onChange={handleChange}
-                sx={{ mb: 2 }} // กำหนดระยะห่างด้านล่าง
               />
+            </Grid>
 
-              <label htmlFor="numStock" className="block text-sm font-medium text-gray-700">
-                จำนวน
-              </label>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 id="numStock"
+                label="จำนวน"
                 variant="outlined"
                 value={form.numStock || ""}
                 onChange={handleChange}
                 type="number"
-                sx={{ mb: 2 }} // กำหนดระยะห่างด้านล่าง
               />
+            </Grid>
 
-              <label htmlFor="type" className="block text-sm font-medium text-gray-700">
-                ประเภทสินค้า
-              </label>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 id="type"
+                label="ประเภทสินค้า"
                 variant="outlined"
                 value={form.type || ""}
                 onChange={handleChange}
-                sx={{ mb: 2 }} // กำหนดระยะห่างด้านล่าง
               />
+            </Grid>
 
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-                มูลค่าต่อชิ้น
-              </label>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 id="price"
+                label="มูลค่าต่อชิ้น"
                 variant="outlined"
                 value={form.price || ""}
                 onChange={handleChange}
                 type="number"
                 step="0.01"
-                sx={{ mb: 2 }} // กำหนดระยะห่างด้านล่าง
               />
+            </Grid>
 
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                รายละเอียดสินค้า
-              </label>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 id="description"
+                label="รายละเอียดสินค้า"
                 variant="outlined"
                 value={form.description || ""}
                 onChange={handleChange}
                 multiline
                 rows={4}
-                sx={{ mb: 2 }} // กำหนดระยะห่างด้านล่าง
               />
+            </Grid>
 
-              <Grid item xs={12} sx={{ mb: 2 }}> {/* ระยะห่างสำหรับ WebcamCapture */}
-                <WebcamCapture
-                  className="bg-white"
-                  id="image"
-                  onCapture={handleCaptureimage}
-                  ModuleName="Product"
-                />
-              </Grid>
+            <Grid item xs={12}>
+              <WebcamCapture
+                id="image"
+                onCapture={handleCaptureimage}
+                ModuleName="Product"
+              />
+            </Grid>
 
-              <div className="flex justify-end mt-5">
-                <button
-                  onClick={handleSubmit}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md flex items-center"
-                >
-                  <FaRegSave className="mr-1" />
-                  บันทึก
-                </button>
-              </div>
-            </Box>
-          </Modal>
+            <Grid item xs={14} display="flex" justifyContent="flex-end">
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<FaRegSave />}
+                onClick={handleSubmit}
+              >
+                บันทึก
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Modal>
 
-
-          {products.map((product) => {
+      {products.map((product) => {
             if (!product || typeof product.approved === 'undefined') {
               return null;
             }
@@ -359,23 +342,22 @@ export default function AddProduct() {
                 <div className="grid grid-cols-3 gap-4">
                   {/* สี่เหลี่ยมสถานะการอนุมัติ */}
                   <div
-                  className={`absolute top-2 right-2 px-3 py-1 text-white font-bold rounded-md ${
-                    product.approved ? 'bg-green-500' : 'bg-yellow-500'
-                  }`}
-                  title={product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
-                >
-                  {product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
-                </div>
+                    className={`absolute top-2 right-2 px-3 py-1 text-white font-bold rounded-md ${product.approved ? 'bg-green-500' : 'bg-yellow-500'
+                      }`}
+                    title={product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
+                  >
+                    {product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
+                  </div>
 
-                {/* ปุ่มแก้ไข */}
-                <button
-                  className="absolute top-2 right-28 px-3 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-700" // ปรับค่า right ที่นี่
+                  {/* ปุ่มแก้ไข */}
+                  <button
+                  className="absolute top-2 right-24 px-3 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-700 flex items-center"
                   onClick={() => handleEdit(product)} // เรียกใช้ฟังก์ชัน handleEdit เมื่อคลิก
                   title="แก้ไขสินค้า"
                 >
+                  <FaEdit className="mr-1" /> {/* ไอคอน Edit */}
                   แก้ไข
                 </button>
-
 
                   <div>
                     {/* ตรวจสอบว่ามี image หรือไม่ */}
@@ -393,28 +375,34 @@ export default function AddProduct() {
                 </div>
 
                 {/* ส่วนแสดงข้อมูลสินค้าอื่น ๆ */}
-                <div className="grid grid-cols-4 gap-4 mt-10">
-                  <p className="col-span-2">จำนวนสินค้าในสต็อก</p>
-                  <p className="text-center">{product.numStock || 0}</p>
-                  <p className="text-right">ชิ้น</p>
-                </div>
+                <div className="grid grid-cols-4 gap-4 py-2 ">
+                <p className="col-span-2">จำนวนสินค้าในสต็อก</p>
+                <p className="text-center">{product.numStock || 0}</p>
+                <p className="text-right">ชิ้น</p>
+              </div>
 
-                <div className="grid grid-cols-4 gap-4 mt-10">
-                  <p className="col-span-2">ราคาต่อชิ้น</p>
-                  <p className="text-center">{product.price || 0}</p>
-                  <p className="text-right">บาท</p>
-                </div>
+              <div className="grid grid-cols-4 gap-4 py-2 ">
+                <p className="col-span-2">ราคาต่อชิ้น</p>
+                <p className="text-center">{product.price || 0}</p>
+                <p className="text-right">บาท</p>
+              </div>
 
-                <div className="grid grid-cols-4 gap-4 mt-10">
-                  <p className="col-span-2">จำนวนเงินทั้งหมด</p>
-                  <p className="text-center">{(product.price * product.numStock) || 0}</p>
-                  <p className="text-right">บาท</p>
-                </div>
+              <div className="grid grid-cols-4 gap-4 py-2 ">
+                <p className="col-span-2">จำนวนเงินทั้งหมด</p>
+                <p className="text-center">{(product.price * product.numStock) || 0}</p>
+                <p className="text-right">บาท</p>
+              </div>
               </div>
             );
           })}
-        </Container>
-      </ThemeProvider>
-    </>
+
+
+<footer className=" text-white py-5 mt-10">
+  
+</footer>
+
+
+    </Container>
+    </ThemeProvider>
   );
 }

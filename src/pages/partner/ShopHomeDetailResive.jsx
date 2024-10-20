@@ -6,13 +6,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import { motion } from "framer-motion";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'; 
 import { getProductByID } from "../../api/strapi/productApi";
-import { getRedeemByUserId,updateRedeem } from "../../api/strapi/RedeemApi";
+import { getRedeemByUserId,updateRedeem, fetchRedeemData  , updateRedeemStatus  } from "../../api/strapi/RedeemApi";
 import Swal from "sweetalert2";
 import { getShopById } from "../../api/strapi/shopApi";
 
 
 import "./css/Togle.css";
-
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337";
 const token = import.meta.env.VITE_TOKEN_TEST;
 const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -23,7 +22,7 @@ const userLineId = user.lineId;
 function ShopHomeDetailResive() {
   const location = useLocation(); 
   const navigate = useNavigate(); 
-  const rawData = location.state?.rawData; // รับข้อมูล rawData
+  const rawData = location.state?.rawData; 
   const [items, setItems] = useState([]);
   const [productDetails, setProductDetails] = useState([]); 
   const [isToggled, setIsToggled] = useState(false);
@@ -31,37 +30,33 @@ function ShopHomeDetailResive() {
   const [shopId, setShopId] = useState(null); 
   const [loading, setLoading] = useState(false);
 
-  
-
   useEffect(() => {
     if (rawData) {
       try {
         const cleanData = rawData.replace(/^"|"$/g, '').trim();
         const parsedItems = JSON.parse(cleanData);
-        setItems(parsedItems);
-        console.log(rawData)
-
         
-  
+        setItems(parsedItems);
+        
         if (parsedItems.length > 0) {
           const fetchProductDetails = async () => {
-            const uniqueProducts = new Set(); // Set สำหรับเก็บ ID ของผลิตภัณฑ์ที่ไม่ซ้ำ
-            const newProductDetails = []; // ตัวแปรใหม่สำหรับเก็บรายละเอียดผลิตภัณฑ์
-  
+            const uniqueProducts = new Set(); 
+            const newProductDetails = []; 
+
             for (const item of parsedItems) {
               const productId = item.id; 
               if (!uniqueProducts.has(productId)) {
                 uniqueProducts.add(productId);
                 const productData = await getProductByID(token, userLineId, productId);
-                if (productData) { // ตรวจสอบว่า productData ไม่เป็น null หรือ undefined
-                  newProductDetails.push(productData); // เพิ่มผลิตภัณฑ์ใหม่เข้าไปในอาร์เรย์
+                if (productData) { 
+                  newProductDetails.push(productData); 
                 }
               }
             }
-  
-            setProductDetails(newProductDetails); // อัปเดต state productDetails ทีเดียวหลังจาก loop เสร็จ
+
+            setProductDetails(newProductDetails); 
           };
-  
+
           fetchProductDetails();
           fetchShops();
         }
@@ -80,21 +75,47 @@ function ShopHomeDetailResive() {
 
       if (shopData && typeof shopData === 'object') {
         setShops([shopData]); 
-        setShopId(shopData.id); // เก็บค่า shop.id ลงใน state shopId
+        setShopId(shopData.id); 
       } else {
         navigate('/ProfileStore');
         setShops([]);
-        setShopId(null); // ถ้าไม่พบร้านค้าให้ตั้งค่า shopId เป็น null
+        setShopId(null);
       }
     } catch (error) {
-      setError(error.message);
+      console.error("Error fetching shops:", error);
     } finally {
       setLoading(false);
     }
   };
 
-
-
+  const handleRedeem = async () => {
+    if (productDetails && productDetails.length > 0) { 
+      const productId = productDetails[0].id; // ใช้ productDetails แทน productData
+      
+      console.log("Handle Redeem Front : " + productId, shopId);
+      try {
+        // Fetch Redeem data ที่ตรงกับเงื่อนไข
+        const redeemData = await fetchRedeemData(productId, shopId);
+        
+        if (redeemData && redeemData.data.length > 0) { // ตรวจสอบ redeemData
+          const pendingRedeems = redeemData.data.filter(redeem => redeem.attributes.status === 'pending');
+          
+          if (pendingRedeems.length > 0) {
+            const redeemId = pendingRedeems[0].id; 
+            await updateRedeemStatus(redeemId); 
+          } else {
+            console.log('No pending redeem found.');
+          }
+        } else {
+          console.log('No redeem data found.');
+        }
+      } catch (error) {
+        console.error("Error handling redeem:", error);
+      }
+    } else {
+      console.log('Product details not available');
+    }
+  };
 // //Update Redeem Status
 //   const handleSubmit = async () => {
 //     try {
@@ -172,9 +193,6 @@ const totalValues = Array.isArray(productDetails) ? productDetails.reduce((sum, 
   }
 };
 
-
-
-
   return (
     <>
       <Header />
@@ -207,7 +225,11 @@ const totalValues = Array.isArray(productDetails) ? productDetails.reduce((sum, 
                       มูลค่า (บาท)
                     </TableCell>
 
-
+                    <div>
+      {/* ส่วนของ UI ที่ต้องการ */}
+      <button onClick={handleRedeem}>Redeem</button>
+      {loading && <p>Loading...</p>}
+    </div>
                     
                   </TableRow>
                 </TableHead>
@@ -308,20 +330,24 @@ const totalValues = Array.isArray(productDetails) ? productDetails.reduce((sum, 
       {shopId && <p>Shop ID: {shopId}</p>}
       {/* แสดงข้อมูลอื่น ๆ ที่เกี่ยวข้อง */}
     </div>
-          <div className="switch" onClick={toggleSwitch}>
-            <motion.div
-              className="handle"
-              layout
-              transition={{ type: "spring", stiffness: 700, damping: 30 }}
-              style={{
-                backgroundColor: toggledOn ? "#4CAF50" : "#ccc", // สีของ switch
-                justifyContent: toggledOn ? "flex-end" : "flex-start", // เลื่อน handle
-              }}
-            >
-              <ArrowForwardIcon style={{ fontSize: '40px', color: 'white' }} />
-            </motion.div>
-            <b>{toggledOn ? "เปิด" : "ปิด"}</b> {/* แสดงสถานะ */}
-          </div>
+    <div className="switch" onClick={() => { 
+    toggleSwitch(); 
+    handleRedeem();  // เรียกฟังก์ชัน handleRedeem
+  }}>
+  <motion.div
+    className="handle"
+    layout
+    transition={{ type: "spring", stiffness: 700, damping: 30 }}
+    style={{
+      backgroundColor: toggledOn ? "#4CAF50" : "#ccc", // สีของ switch
+      justifyContent: toggledOn ? "flex-end" : "flex-start", // เลื่อน handle
+    }}
+  >
+    <ArrowForwardIcon style={{ fontSize: '40px', color: 'white' }} />
+  </motion.div>
+  <b>{toggledOn ? "เปิด" : "ปิด"}</b> {/* แสดงสถานะ */}
+</div>
+
         </CardContent>
       </Card>
     </Box>

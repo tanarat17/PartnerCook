@@ -85,3 +85,54 @@ export const updateRedeem = async (token: string, userLineId: string, productId:
 };
 
 
+
+export const fetchRedeemData = async (productId, shopId) => {
+    console.log("Handle Redeem Back : " + productId, shopId);
+
+    try {
+        // สร้าง query สำหรับ filtering ข้อมูลจาก productJsonArray
+        const response = await fetch(`${API_URL}/api/redeems?filters[shop][$eq]=${shopId}&filters[productJsonArray][$contains]=${JSON.stringify([{ id: productId }])}`);
+        
+        // ตรวจสอบสถานะการตอบกลับ
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            throw new Error(`Error fetching redeem data: ${response.status} ${response.statusText}. Message: ${errorMessage}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching redeem data from Strapi:", error);
+        return null;
+    }
+};
+
+
+  
+  
+
+export const updateRedeemStatus = async (redeemId) => {
+    try {
+        const response = await fetch(`${API_URL}/api/redeems/${redeemId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                status: 'Approve' // อัปเดทสถานะเป็น Approve
+            })
+        });
+
+        // ตรวจสอบว่าการตอบกลับมีสถานะที่ถูกต้อง
+        if (!response.ok) {
+            throw new Error(`Failed to update redeem status: ${response.statusText}`);
+        }
+
+        console.log('Redeem status updated successfully');
+    } catch (error) {
+        console.error("Error updating redeem status:", error);
+    }
+};
+  
+
+
