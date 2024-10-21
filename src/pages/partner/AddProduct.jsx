@@ -76,6 +76,7 @@ export default function AddProduct() {
   const fetchProducts = async () => {
     try {
       const fetchedProducts = await getAllProductsByShopId(token, shopId);
+      console.log("Front :: " + fetchedProducts)
       setProducts(fetchedProducts);
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการดึงข้อมูลสินค้า:", error);
@@ -118,7 +119,7 @@ export default function AddProduct() {
       if (!form.name || !form.numStock || !form.price || !form.type) {
         Swal.fire({
           icon: "warning",
-          title: "ข้อมูลไม่ครบ",
+          title: "กรุณาตรวจสอบข้อมูลอีกครั้ง",
           text: "กรุณาตรวจสอบข้อมูลอีกครั้ง",
           position: 'center',
           showConfirmButton: true,
@@ -179,17 +180,17 @@ export default function AddProduct() {
       });
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการเพิ่ม/แก้ไขสินค้า:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "เกิดข้อผิดพลาดในการเพิ่ม/แก้ไขสินค้า!",
-        position: 'center',
-        showConfirmButton: true,
-        confirmButtonText: "ตกลง",
-      }).then(() => {
-        handleClose(); // ปิด modal เมื่อมีข้อผิดพลาด
+      await Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "เกิดข้อผิดพลาดในการเพิ่ม/แก้ไขสินค้า!",
+          position: 'center',
+          showConfirmButton: true,
+          confirmButtonText: "ตกลง",
       });
-    }
+      handleClose(); // ปิด modal เมื่อมีข้อผิดพลาด
+  }
+  
   };
 
   const handleEdit = (product) => {
@@ -271,6 +272,11 @@ export default function AddProduct() {
                 value={form.numStock || ""}
                 onChange={handleChange}
                 type="number"
+                inputProps={{
+                  min: 1, // ห้ามน้อยกว่า 1
+                }}
+                error={form.numStock < 1 && form.numStock !== ""} 
+                helperText={form.numStock < 1 && form.numStock !== "" ? "จำนวนต้องไม่น้อยกว่า 1" : ""}
               />
             </Grid>
 
@@ -295,6 +301,11 @@ export default function AddProduct() {
                 onChange={handleChange}
                 type="number"
                 step="0.01"
+                inputProps={{
+                  min: 1, // ห้ามน้อยกว่า 1
+                }}
+                error={form.price < 1 && form.price !== ""} 
+                helperText={form.price < 1 && form.price !== "" ? "มูลค่าต่อชิ้นต้องไม่น้อยกว่า 1" : ""}
               />
             </Grid>
 
@@ -352,7 +363,7 @@ export default function AddProduct() {
                   {/* ปุ่มแก้ไข */}
                   <button
                   className="absolute top-2 right-24 px-3 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-700 flex items-center"
-                  onClick={() => handleEdit(product)} // เรียกใช้ฟังก์ชัน handleEdit เมื่อคลิก
+                  onClick={() => handleEdit(product)} 
                   title="แก้ไขสินค้า"
                 >
                   <FaEdit className="mr-1" /> {/* ไอคอน Edit */}

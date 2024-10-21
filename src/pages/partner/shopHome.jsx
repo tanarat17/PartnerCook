@@ -25,24 +25,27 @@ function ShopHome() {
 
         console.log('Fetched shop data:', shopData); 
 
-        if (shopData && typeof shopData === 'object') {
-          setShops([shopData]); 
+        if (shopData && typeof shopData === 'object' && shopData.shop) {
+          setShops([shopData.shop]); // ดึงข้อมูลเฉพาะ shop
         } else {
+          // กรณีไม่พบข้อมูลร้านค้า ให้เปลี่ยนไปหน้า ProfileStore
           navigate('/ProfileStore');
-          setShops([]);
         }
       } catch (error) {
-        setError(error.message);
+        setError('Error: Shop data is undefined or missing.');
+        navigate('/ProfileStore'); // เปลี่ยนไปหน้า ProfileStore เมื่อเกิดข้อผิดพลาด
       } finally {
         setLoading(false);
       }
     };
 
     fetchShops();
-  }, [token, userId]);
-console.log(PicLineUser);
+  }, [token, userId, navigate]);
+
+  console.log(PicLineUser);
+
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <>
@@ -50,7 +53,7 @@ console.log(PicLineUser);
       <div className="mx-auto px-2">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
           {shops.map((shop) => {
-            const shopDetails = shop.shop || {}; // เข้าถึงรายละเอียดของ shop
+            const shopDetails = shop || {}; // เข้าถึงรายละเอียดของ shop
             return (
               <Link to="/partner/add-product" className="btn-link" key={shop.id}>
                 <div className="shop-2">
@@ -62,7 +65,7 @@ console.log(PicLineUser);
                         : 'url(https://cdn.britannica.com/70/234870-050-D4D024BB/Orange-colored-cat-yawns-displaying-teeth.jpg)',
                       backgroundSize: "cover", 
                       backgroundPosition: "center", 
-                      aspectRatio: '1 / 1' // ทำให้มีอัตราส่วน 1:1 เพื่อให้เป็นสี่เหลี่ยมจัตุรัส
+                      aspectRatio: '1 / 1' 
                     }}
                   ></span>
 

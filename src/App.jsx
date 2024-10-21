@@ -51,7 +51,7 @@ const App = () => {
                         localStorage.setItem('accessToken', jwt);
                         localStorage.setItem('user', JSON.stringify(user));
                         console.log('Token and user data saved to localStorage');
-                        navigate('/partner/ProfileStore');
+                        navigate('/partner/shopHome');
                     }
                 } else {
                     liff.login();

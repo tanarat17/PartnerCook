@@ -234,28 +234,50 @@ console.log("Bank",banks)
               />
             </div>
             <div className="w-full md:w-1/2 px-2 mt-4">
-              <TextField
-                id="cardID"
-                label="หมายเลขบัตรประจำตัวประชาชน"
-                variant="outlined"
-                className="w-full bg-white"
-                required
-                value={formData.cardID}
-                onChange={handleInputChange}
-              />
+            <TextField
+              id="cardID"
+              label="หมายเลขบัตรประจำตัวประชาชน"
+              variant="outlined"
+              className="w-full bg-white"
+              required
+              value={formData.cardID}
+              onChange={handleInputChange}
+              inputProps={{
+                maxLength: 13, // จำกัดจำนวนหลักให้ไม่เกิน 13
+                pattern: "[0-9]*", // อนุญาตเฉพาะตัวเลข
+                inputMode: "numeric", // แสดงคีย์บอร์ดตัวเลขบนอุปกรณ์มือถือ
+              }}
+              error={formData.cardID.length !== 13} // แสดง error หากไม่ใช่ 13 หลัก
+              helperText={
+                formData.cardID.length !== 13 ? "หมายเลขบัตรประจำตัวต้องมี 13 หลัก" : ""
+              }
+            />
+
             </div>
             <div className="w-full md:w-1/2 px-2 mt-4">
-              <TextField
-                id="bookBankNumber"
-                label="หมายเลขบัญชีธนาคาร"
-                variant="outlined"
-                className="w-full bg-white"
-                required
-                value={formData.bookBankNumber}
-                onChange={handleInputChange}
-              />
-            </div>
-            
+            <TextField
+              id="bookBankNumber"
+              label="หมายเลขบัญชีธนาคาร"
+              variant="outlined"
+              className="w-full bg-white"
+              required
+              value={formData.bookBankNumber}
+              onChange={handleInputChange}
+              inputProps={{
+                maxLength: 15, // จำกัดให้กรอกไม่เกิน 15 หลัก
+                pattern: "[0-9]*", // อนุญาตให้กรอกเฉพาะตัวเลข
+                inputMode: "numeric", // แสดงคีย์บอร์ดตัวเลขบนมือถือ
+              }}
+              error={formData.bookBankNumber.length > 15 || formData.bookBankNumber.length < 10} // แสดง error หากจำนวนหลักเกิน 15 หรือน้อยกว่า 10
+              helperText={
+                formData.bookBankNumber.length > 15
+                  ? "หมายเลขบัญชีธนาคารต้องไม่เกิน 15 หลัก"
+                  : formData.bookBankNumber.length < 10
+                  ? "หมายเลขบัญชีธนาคารต้องมีอย่างน้อย 10 หลัก"
+                  : ""
+              }
+          />
+          </div>
             {/* <div className="w-full md:w-1/2 px-2 mt-4">
               <FormControl fullWidth>
                 <InputLabel id="bank-select-label">ธนาคาร</InputLabel>

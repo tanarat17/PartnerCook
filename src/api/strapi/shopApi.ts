@@ -70,36 +70,31 @@ export const getShopsByUserID = async (token, shopId) => {
 
 export const getShopById = async (token, userId) => {
     try {
-        const response = await fetch(`${API_URL}/api/users/${userId}?populate=shop`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+      const response = await fetch(`${API_URL}/api/users/${userId}?populate=shop`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        //   Authorization: `Bearer ${token}`,
+        },
+      });
       
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error('Error fetching shops:', errorData);
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-      
-        const data = await response.json();
-
-        if (!data.shop) {
-        //   console.error('Invalid shop data:', data);
-          throw new Error('Shop data is undefined or missing.');
-        }
-      
-        const shopId = data.shop.id; 
-      
-        return data; 
-      } catch (error) {
-        // console.error('Error fetching shop by ID:', error);
-        throw error; 
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error fetching shop by ID:', errorData);
+        throw new Error(`Request failed with status ${response.status}`);
       }
       
+      const textData = await response.text();
+      console.log('Raw response:', textData);  // ดูข้อมูลตอบกลับดิบก่อนแปลงเป็น JSON
       
+      const data = JSON.parse(textData);
+      return data;
+    } catch (error) {
+      console.error('Error fetching shop by ID:', error);
+      throw error;
+    }
   };
+  
   
 export const createShop = async (token: string, shopData: Record<string, any>) => {
 
@@ -131,7 +126,10 @@ export const createShop = async (token: string, shopData: Record<string, any>) =
 
 
 export const updateUserFromShop = async (token: string,userId : string ,userData: Record<string, any>) => {
-    console.log(userId);
+    
+    console.log("updateUserFromShop :: ")
+    console.log("UserID :: "+ userId);
+    console.log("UserData :: "+userData);
     try {
         const url = `${API_URL}/api/users/${userId}`; 
 

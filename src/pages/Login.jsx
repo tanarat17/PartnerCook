@@ -17,7 +17,7 @@ const Login = () => {
     useEffect(() => {
         const initializeLiff = async () => {
             try {
-                await liff.init({ liffId: "2006448899-kaB4QBVr" }); 
+                await liff.init({ liffId: "2006277696-kQM0MMde" }); 
                 if (liff.isLoggedIn()) {
                     const token = liff.getAccessToken();
                     setAccessToken(token);

@@ -14,6 +14,8 @@ export const getAllProductsByShopId = async (token: string, shopId: number): Pro
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                // ใส่ token ถ้าจำเป็น
+                // Authorization: `Bearer ${token}`,
             },
         });
 
@@ -33,31 +35,33 @@ export const getAllProductsByShopId = async (token: string, shopId: number): Pro
 
         const products: Product[] = data.data.map((item: any, index: number) => {
             console.log(`Processing product ${index}:`, item);
-            if (!item || typeof item !== 'object') {
+            if (!item || typeof item !== 'object' || !item.attributes) {
                 console.error(`Invalid product at index ${index}:`, item);
                 throw new Error(`Invalid product data at index ${index}`);
             }
 
+            // ตรวจสอบข้อมูลที่เกี่ยวกับร้านค้า
+            const shopData = item.attributes.shop || {};
             return {
                 id: item.id,
-                name: item.attributes.name,
-                description: item.attributes.description,
-                price: item.attributes.price,
-                point: item.attributes.point,
-                approved: item.attributes.approved,
-                createdAt: item.attributes.createdAt,
-                updatedAt: item.attributes.updatedAt,
-                publishedAt: item.attributes.publishedAt,
+                name: item.attributes.name || 'ไม่ระบุชื่อสินค้า',
+                description: item.attributes.description || 'ไม่มีรายละเอียด',
+                price: item.attributes.price || 0, // ตั้งค่าราคาเริ่มต้นเป็น 0 หากไม่มี
+                point: item.attributes.point || null,
+                approved: item.attributes.approved || false,
+                createdAt: item.attributes.createdAt || null,
+                updatedAt: item.attributes.updatedAt || null,
+                publishedAt: item.attributes.publishedAt || null,
                 image: item.attributes.image || null,
                 shop: {
-                    id: item.attributes.shop.id,
-                    name: item.attributes.shop.name,
-                    location: item.attributes.shop.location,
-                    latitude: item.attributes.shop.latitude,
-                    longitude: item.attributes.shop.longitude,
-                    createdAt: item.attributes.shop.createdAt,
-                    updatedAt: item.attributes.shop.updatedAt,
-                    publishedAt: item.attributes.shop.publishedAt,
+                    id: shopData.id || null,
+                    name: shopData.name || 'ไม่ระบุชื่อร้านค้า',
+                    location: shopData.location || null,
+                    latitude: shopData.latitude || null,
+                    longitude: shopData.longitude || null,
+                    createdAt: shopData.createdAt || null,
+                    updatedAt: shopData.updatedAt || null,
+                    publishedAt: shopData.publishedAt || null,
                 },
                 numStock: item.attributes.numStock || 0, // เพิ่มฟิลด์ numStock และตั้งค่าเริ่มต้นเป็น 0 หากไม่มี
             };
@@ -70,6 +74,7 @@ export const getAllProductsByShopId = async (token: string, shopId: number): Pro
         throw error;
     }
 };
+
 
 export const addProduct = async (token: string, userLineId: string, productData: Record<string, any>) => {
     try {
