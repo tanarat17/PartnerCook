@@ -42,6 +42,57 @@ export const getRedeemByUserId = async (token: string, userId: string) => {
 
 
 
+// const fetchInvoices = async () => {
+//     try {
+//       const token = "your_token_here"; // ใส่ token ที่ได้รับจากการเข้าสู่ระบบ
+//       const response = await fetch(`/invoices?shopId=${shopId}`, {
+//         method: "GET",
+//         headers: {
+//           "Authorization": `Bearer ${token}`,
+//           "Content-Type": "application/json",
+//         },
+//       });
+  
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//       }
+  
+//       const data = await response.json();
+//       setInvoices(data);
+//     } catch (error) {
+//       console.error("Error fetching invoices:", error);
+//     }
+//   };
+
+
+  export const fetchInvoices = async (token, shopId) => {
+    try {
+       const response = await fetch(`/invoices?shopId=${shopId}`, {
+    headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch Redeem data');
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching Redeem data:', error);
+      return null;
+    }
+  };
+  
+
+
+  
+
+
+
+
 export const updateRedeem = async (token: string, userLineId: string, productId: number, productData: Record<string, any>) => {
     try {
         const url = `${API_URL}/api/products/${productId}`; 
@@ -90,10 +141,8 @@ export const fetchRedeemData = async (productId, shopId) => {
     console.log("Handle Redeem Back : " + productId, shopId);
 
     try {
-        // สร้าง query สำหรับ filtering ข้อมูลจาก productJsonArray
         const response = await fetch(`${API_URL}/api/redeems?filters[shop][$eq]=${shopId}&filters[productJsonArray][$contains]=${JSON.stringify([{ id: productId }])}`);
         
-        // ตรวจสอบสถานะการตอบกลับ
         if (!response.ok) {
             const errorMessage = await response.text();
             throw new Error(`Error fetching redeem data: ${response.status} ${response.statusText}. Message: ${errorMessage}`);
@@ -108,6 +157,25 @@ export const fetchRedeemData = async (productId, shopId) => {
 };
 
 
+export const getRedeemByShop = async (token, shopId) => {
+    try {
+      const response = await fetch(`${API_URL}/redeems?filters[shop][id][$eq]=${shopId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch Redeem data');
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching Redeem data:', error);
+      return null;
+    }
+  };
   
   
 
@@ -119,11 +187,10 @@ export const updateRedeemStatus = async (redeemId) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                status: 'Approve' // อัปเดทสถานะเป็น Approve
+                status: 'Approve' 
             })
         });
 
-        // ตรวจสอบว่าการตอบกลับมีสถานะที่ถูกต้อง
         if (!response.ok) {
             throw new Error(`Failed to update redeem status: ${response.statusText}`);
         }

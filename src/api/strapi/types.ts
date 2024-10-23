@@ -97,7 +97,7 @@ export interface Invoice {
   id: number; 
   amount: number; 
   status: 'pending' | 'paid' | 'canceled'; 
-  //transferImage: Media;
+  transferImage: number;
   redeem: Redeem;
   productJsonArray: Record<string, any>[];
   invoiceNumber: string;

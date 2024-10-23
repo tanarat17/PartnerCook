@@ -37,12 +37,7 @@
     opacity: 0; /* ซ่อนลูกศรเมื่อ toggledOn เป็น false */
 }
 
-@font-face {
-    font-family: 'Sarabun';
-    src: url('../../../../assets/fonts/Sarabun-Medium.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
+
 
   body {
     font-family: 'Sarabun', sans-serif;

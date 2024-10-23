@@ -6,12 +6,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import { motion } from "framer-motion";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'; 
 import { getProductByID } from "../../api/strapi/productApi";
-import { getRedeemByUserId,updateRedeem, fetchRedeemData  , updateRedeemStatus  } from "../../api/strapi/RedeemApi";
+import { getRedeemByUserId, getRedeemByShop } from "../../api/strapi/RedeemApi";
 import Swal from "sweetalert2";
 import { getShopById } from "../../api/strapi/shopApi";
 
+import "./css/Togle.css"; // ไฟล์ CSS สำหรับ switch
 
-import "./css/Togle.css";
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337";
 const token = import.meta.env.VITE_TOKEN_TEST;
 const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -26,16 +26,17 @@ function ShopHomeDetailResive() {
   const [items, setItems] = useState([]);
   const [productDetails, setProductDetails] = useState([]); 
   const [isToggled, setIsToggled] = useState(false);
-  const [shops, setShops] = useState([]);
+  const [shops, setShops] = useState([]); 
   const [shopId, setShopId] = useState(null); 
   const [loading, setLoading] = useState(false);
+  const [isOn, setIsOn] = useState(false);
 
+  // ดึงข้อมูลสินค้าที่ถูก redeem
   useEffect(() => {
     if (rawData) {
       try {
         const cleanData = rawData.replace(/^"|"$/g, '').trim();
         const parsedItems = JSON.parse(cleanData);
-        
         setItems(parsedItems);
         
         if (parsedItems.length > 0) {
@@ -53,7 +54,6 @@ function ShopHomeDetailResive() {
                 }
               }
             }
-
             setProductDetails(newProductDetails); 
           };
 
@@ -66,11 +66,11 @@ function ShopHomeDetailResive() {
     }
   }, [rawData, token, userLineId]);
 
+  // ดึงข้อมูลร้านค้า
   const fetchShops = async () => {
     try {
       setLoading(true);
       const shopData = await getShopById(token, userId); 
-
       console.log('Fetched shop data:', shopData); 
 
       if (shopData && typeof shopData === 'object') {
@@ -78,7 +78,7 @@ function ShopHomeDetailResive() {
         setShopId(shopData.id); 
       } else {
         navigate('/ProfileStore');
-        setShops([]);
+        setShops([]); 
         setShopId(null);
       }
     } catch (error) {
@@ -88,110 +88,44 @@ function ShopHomeDetailResive() {
     }
   };
 
+  // ฟังก์ชันจัดการ Redeem
   const handleRedeem = async () => {
-    if (productDetails && productDetails.length > 0) { 
-      const productId = productDetails[0].id; // ใช้ productDetails แทน productData
+    console.log("Handle Redeem Front : " + shopId);
+    try {
+      const shopRedeemData = await getRedeemByShop(shopId);
       
-      console.log("Handle Redeem Front : " + productId, shopId);
-      try {
-        // Fetch Redeem data ที่ตรงกับเงื่อนไข
-        const redeemData = await fetchRedeemData(productId, shopId);
-        
-        if (redeemData && redeemData.data.length > 0) { // ตรวจสอบ redeemData
-          const pendingRedeems = redeemData.data.filter(redeem => redeem.attributes.status === 'pending');
-          
-          if (pendingRedeems.length > 0) {
-            const redeemId = pendingRedeems[0].id; 
-            await updateRedeemStatus(redeemId); 
-          } else {
-            console.log('No pending redeem found.');
-          }
+      if (shopRedeemData && shopRedeemData.length > 0) {
+        const pendingRedeems = shopRedeemData.filter(redeem => redeem.attributes.status === 'pending');
+        if (pendingRedeems.length > 0) {
+          console.log('Pending Redeems:', pendingRedeems);
         } else {
-          console.log('No redeem data found.');
+          console.log('No pending redeem found in shop.');
         }
-      } catch (error) {
-        console.error("Error handling redeem:", error);
+      } else {
+        console.log('No redeem data found for this shop.');
       }
-    } else {
-      console.log('Product details not available');
+    } catch (error) {
+      console.error("Error handling redeem:", error);
     }
   };
-// //Update Redeem Status
-//   const handleSubmit = async () => {
-//     try {
-     
-//       let response;
-//       if (isEditing) {
-//         response = await updateRedeem(token, Redeemid);
-//         setProducts((prev) => prev.map((p) => (p.id === editProductId ? response.data.data : p)));
-//       } else {
-//         response = await addProduct(token, userLineId ,productData);
-//         setProducts((prevProducts) => [...prevProducts, response.data.data]);
-//         handleClose();
-//       }
 
-//       Swal.fire({
-//         icon: "success",
-//         title: isEditing ? "Update Statust Redeem แล้ว" : "Redeem Update เรียบร้อยแล้ว",
-//         position: 'center',
-//         showConfirmButton: true,
-//         confirmButtonText: "ตกลง",
-//       }).then(() => {
-//         handleClose();
-//         fetchProducts();
-//       });
-//     } catch (error) {
-//       console.error("เกิดข้อผิดพลาดในการเพิ่ม/แก้ไขRedeem:", error);
-//       Swal.fire({
-//         icon: "error",
-//         title: "Oops...",
-//         text: "เกิดข้อผิดพลาดในการเพิ่ม/แก้ไขRedeem!",
-//         position: 'center',
-//         showConfirmButton: true,
-//         confirmButtonText: "ตกลง",
-//       }).then(() => {
-//         handleClose(); // ปิด modal เมื่อมีข้อผิดพลาด
-//       });
-//     }
-//   };
+  // คำนวณมูลค่ารวมของสินค้า
+  const totalValues = Array.isArray(productDetails) ? productDetails.reduce((sum, product) => {
+    const matchedItem = items.find(item => item.id === product.id);
+    const count = matchedItem ? matchedItem.counts : 0;
+    const itemValue = (product.price || 0) * count;
+    return sum + itemValue;
+  }, 0) : 0;
 
-  {/* การคำนวณมูลค่ารวมทั้งหมด */}
-const totalValues = Array.isArray(productDetails) ? productDetails.reduce((sum, product) => {
-  const matchedItem = items.find(item => item.id === product.id);
-  const count = matchedItem ? matchedItem.counts : 0; // ใช้ counts ถ้า match ได้
-  const itemValue = (product.price || 0) * count; // คำนวณมูลค่ารวมของแต่ละรายการ
-  return sum + itemValue; // รวมมูลค่าทั้งหมด
-}, 0) : 0; // ถ้า productDetails ไม่ใช่ array ให้ totalValue เป็น 0
-
-
-  
-
-  const [toggledOn, setToggledOn] = useState(false); 
-  const toggleSwitch = () => {
-    setToggledOn(!toggledOn);
+  // ฟังก์ชัน Toggle
+  const handleToggle = () => {
+    setIsToggled(prev => !prev);
+    console.log("Toggle switch state:", !isToggled);
   };
+
   const handleClose = () => {
     console.log("Card closed");
   };
-
-
- // ฟังก์ชัน handleToggle
- const handleToggle = async (rowData) => {
-  console.log("Redeem :", JSON.stringify(rowData, null, 2)); // ใช้ JSON.stringify เพื่อแสดงวัตถุในรูปแบบที่อ่านได้
-  setIsToggled(prev => !prev);
-  
-  // ดึงข้อมูลการแลกของรางวัลเมื่อมีการเปิด toggle
-  if (!isToggled) { 
-    try {
-      const reDeemId = rowData.id;
-      const redeemData = await getRedeemByUserId(token, userId); // ส่ง rowData.id
-      console.log("Redeem Data:", redeemData); 
-      // คุณสามารถอัพเดตสถานะ หรือแสดงข้อมูลที่ได้จาก redeemData ที่นี่
-    } catch (error) {
-      console.error("Error fetching redeem data:", error);
-    }
-  }
-};
 
   return (
     <>
@@ -201,7 +135,7 @@ const totalValues = Array.isArray(productDetails) ? productDetails.reduce((sum, 
           <CardHeader 
             style={{ backgroundColor: '#800020', color: 'white' }}
             action={
-              <IconButton onClick={handleClose} style={{ color: 'white' }}>
+              <IconButton onClick={() => console.log("Card closed")} style={{ color: 'white' }}>
                 <CloseIcon />
               </IconButton>
             }
@@ -220,62 +154,37 @@ const totalValues = Array.isArray(productDetails) ? productDetails.reduce((sum, 
                     <TableCell sx={{ textAlign: 'center', fontFamily: 'Sarabun, sans-serif', fontSize: '16px' }}>
                       จำนวน
                     </TableCell>
-                    
                     <TableCell sx={{ textAlign: 'left', fontFamily: 'Sarabun, sans-serif', fontSize: '16px' }}>
                       มูลค่า (บาท)
                     </TableCell>
-
-                    <div>
-      {/* ส่วนของ UI ที่ต้องการ */}
-      <button onClick={handleRedeem}>Redeem</button>
-      {loading && <p>Loading...</p>}
-    </div>
-                    
                   </TableRow>
                 </TableHead>
                 <TableBody>
-  {Array.isArray(productDetails) && productDetails.length > 0 ? (
-    productDetails.map((product, index) => {
-      // หา count จาก items โดยการ match ด้วย product ID
-      const matchedItem = items.find(item => item.id === product.id);
-      const count = matchedItem ? matchedItem.counts : 0; // ใช้ counts ถ้า match ได้
+                  {Array.isArray(productDetails) && productDetails.length > 0 ? (
+                    productDetails.map((product, index) => {
+                      const matchedItem = items.find(item => item.id === product.id);
+                      const count = matchedItem ? matchedItem.counts : 0;
 
-      return (
-        <TableRow key={index}>
-          <TableCell sx={{ textAlign: 'left', fontFamily: 'Sarabun, sans-serif', fontSize: '14px' }}>
-            {product.name} {/* แสดงชื่อผลิตภัณฑ์ */}
-          </TableCell>
-          <TableCell sx={{ textAlign: 'center', fontFamily: 'Sarabun, sans-serif', fontSize: '14px' }}>
-            {count} {/* แสดงจำนวนสินค้าที่จับคู่ */}
-          </TableCell>
-          {/* <TableCell sx={{ textAlign: 'center', fontFamily: 'Sarabun, sans-serif', fontSize: '14px' }}>
-            {matchedItem ? matchedItem.numStock : 0} 
-          </TableCell> */}
-          <TableCell sx={{ textAlign: 'left', fontFamily: 'Sarabun, sans-serif', fontSize: '14px' }}>
-            {product.price !== undefined && product.price !== null && !isNaN(product.price)
-              ? `${Number(product.price).toLocaleString()} บาท` // แสดงราคา
-              : 'ไม่มีราคา'}
-          </TableCell>
-
-
-          <TableCell onClick={() => handleToggle(product)} sx={{ textAlign: 'left', fontFamily: 'Sarabun, sans-serif', fontSize: '14px', cursor: 'pointer' }}>
-            {product.name} {/* แสดงชื่อผลิตภัณฑ์ */}
-          </TableCell>
-
-          
-        </TableRow>
-      );
-    })
-  ) : (
-    <TableRow>
-      <TableCell colSpan={4} sx={{ textAlign: 'center' }}>
-        ไม่มีข้อมูลผลิตภัณฑ์
-      </TableCell>
-    </TableRow>
-  )}
-</TableBody>
-
-
+                      return (
+                        <TableRow key={index}>
+                          <TableCell sx={{ textAlign: 'left', fontFamily: 'Sarabun, sans-serif', fontSize: '14px' }}>
+                            {product.name}
+                          </TableCell>
+                          <TableCell sx={{ textAlign: 'center', fontFamily: 'Sarabun, sans-serif', fontSize: '14px' }}>
+                            {count}
+                          </TableCell>
+                          <TableCell sx={{ textAlign: 'left', fontFamily: 'Sarabun, sans-serif', fontSize: '14px' }}>
+                            {product.price ? `${Number(product.price).toLocaleString()} บาท` : 'ไม่มีราคา'}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} sx={{ textAlign: 'center' }}>ไม่มีข้อมูลผลิตภัณฑ์</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
               </Table>
             </TableContainer>
             <Typography 
@@ -296,61 +205,72 @@ const totalValues = Array.isArray(productDetails) ? productDetails.reduce((sum, 
 
       {/* Card สำหรับยืนยันการส่งสินค้า */}
       <Box display="flex" justifyContent="center" alignItems="center" style={{ minHeight: '20vh' }}>
-      <Card style={{ width: '80%', maxWidth: '800px' }}>
-        <CardHeader 
-          style={{ backgroundColor: '#800020', color: 'white' }}
-          action={
-            <IconButton onClick={handleClose} style={{ color: 'white' }}>
-              <CloseIcon />
-            </IconButton>
-          }
-        />
-        <CardContent
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '200px'
-          }}
-        >
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              fontFamily: 'Sarabun, sans-serif', 
-              fontSize: '18px',
-              textAlign: 'center',
-              padding: '40px',
+        <Card style={{ width: '80%', maxWidth: '800px' }}>
+          <CardHeader
+            style={{ backgroundColor: '#800020', color: 'white' }}
+            action={
+              <IconButton onClick={handleClose} style={{ color: 'white' }}>
+                <CloseIcon />
+              </IconButton>
+            }
+          />
+          <CardContent
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '200px',
+              padding: '16px',
             }}
           >
-            ยืนยันการจัดส่งสินค้า
-          </Typography>
-          <div>
-      {/* แสดงค่า shopId ที่เก็บไว้ */}
-      {shopId && <p>Shop ID: {shopId}</p>}
-      {/* แสดงข้อมูลอื่น ๆ ที่เกี่ยวข้อง */}
-    </div>
-    <div className="switch" onClick={() => { 
-    toggleSwitch(); 
-    handleRedeem();  // เรียกฟังก์ชัน handleRedeem
-  }}>
-  <motion.div
-    className="handle"
-    layout
-    transition={{ type: "spring", stiffness: 700, damping: 30 }}
-    style={{
-      backgroundColor: toggledOn ? "#4CAF50" : "#ccc", // สีของ switch
-      justifyContent: toggledOn ? "flex-end" : "flex-start", // เลื่อน handle
-    }}
-  >
-    <ArrowForwardIcon style={{ fontSize: '40px', color: 'white' }} />
-  </motion.div>
-  <b>{toggledOn ? "เปิด" : "ปิด"}</b> {/* แสดงสถานะ */}
-</div>
+            <Typography
+              variant="h6"
+              sx={{
+                fontFamily: 'Sarabun, sans-serif',
+                fontSize: '18px',
+                textAlign: 'center',
+                marginBottom: '20px',
+              }}
+            >
+              ยืนยันการจัดส่งสินค้า
+            </Typography>
 
-        </CardContent>
-      </Card>
-    </Box>
+            {/* Switch Component */}
+            <Box display="flex" alignItems="center">
+  <Typography variant="body1" sx={{ marginRight: '10px' }}>
+    {isToggled ? "" : ""}
+  </Typography>
+  <motion.div
+    onClick={handleToggle}
+    style={{
+      width: 400, // เพิ่มความยาวของ switch
+      height: 25,
+      borderRadius: 12,
+      background: isToggled ? '#FFC300' : '#ccc',
+      position: 'relative',
+      cursor: 'pointer',
+    }}
+    whileHover={{ scale: 1.1 }}
+  >
+    <motion.div
+      style={{
+        width: 20,
+        height: 20,
+        borderRadius: '50%',
+        background: 'white',
+        position: 'absolute',
+        top: 2,
+        left: isToggled ? 375 : 5, // ปรับตำแหน่งให้เข้ากับความยาวใหม่
+        transition: 'left 0.2s',
+      }}
+    />
+  </motion.div>
+</Box>
+
+          </CardContent>
+        </Card>
+      </Box>
     </>
   );
 }

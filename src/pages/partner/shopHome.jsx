@@ -29,11 +29,11 @@ function ShopHome() {
           setShops([shopData.shop]); // ดึงข้อมูลเฉพาะ shop
         } else {
           // กรณีไม่พบข้อมูลร้านค้า ให้เปลี่ยนไปหน้า ProfileStore
-          navigate('/ProfileStore');
+          navigate('/PDPA');
         }
       } catch (error) {
         setError('Error: Shop data is undefined or missing.');
-        navigate('/ProfileStore'); // เปลี่ยนไปหน้า ProfileStore เมื่อเกิดข้อผิดพลาด
+        navigate('/PDPA'); // เปลี่ยนไปหน้า ProfileStore เมื่อเกิดข้อผิดพลาด
       } finally {
         setLoading(false);
       }

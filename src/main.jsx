@@ -165,6 +165,12 @@ const router = createBrowserRouter([
     path: "/partner/contact-us",
     element: <ContactUs_Partner />
   },
+
+
+  {
+    path: "/pdpa",
+    element: <PDPA />
+  },
   {
     path: "/partner/pdpa",
     element: <PDPA />

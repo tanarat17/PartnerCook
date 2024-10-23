@@ -67,32 +67,44 @@ export const getShopsByUserID = async (token, shopId) => {
         throw error; 
     }
 };
-
 export const getShopById = async (token, userId) => {
     try {
-      const response = await fetch(`${API_URL}/api/users/${userId}?populate=shop`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        //   Authorization: `Bearer ${token}`,
-        },
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Error fetching shop by ID:', errorData);
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-      
-      const textData = await response.text();
-      console.log('Raw response:', textData);  // ดูข้อมูลตอบกลับดิบก่อนแปลงเป็น JSON
-      
-      const data = JSON.parse(textData);
-      return data;
+        const response = await fetch(`${API_URL}/api/users/${userId}?populate=shop`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error fetching shop by ID:', errorData);
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const textData = await response.text();
+        console.log('Raw response:', textData); // ดูข้อมูลตอบกลับดิบ
+
+        if (!textData) {
+            throw new Error('No data returned from the server');
+        }
+
+        const data = JSON.parse(textData);
+        return data;
     } catch (error) {
-      console.error('Error fetching shop by ID:', error);
-      throw error;
+        console.error('Error fetching shop by ID:', error);
+        throw error;
     }
+};
+
+
+
+  const getRedeemByShop = async (shopId) => {
+    const response = await fetch(`/shops/${shopId}?populate=redeems`);
+    const data = await response.json();
+    console.log("GetRedeemBtShop : " + data)
+    return data.redeems;
   };
   
   
@@ -254,9 +266,7 @@ export const updateShop = async (token: string, shopId: number, shopData: Record
 
 
 export const getBank = async (token: string): Promise<Bank[]> => {
-    // if (!token) {
-    //     throw new Error('No token provided. User must be authenticated.');
-    // }
+  
     try {
         const url = `${API_URL}/api/banks`; 
         const response = await fetch(url, {
@@ -295,5 +305,69 @@ export const getBank = async (token: string): Promise<Bank[]> => {
         throw error;
     }
 };
+
+
+// export const fetchShopInvoices = async (shopId) => {
+//     try {
+
+//         const url = `${API_URL}/api/shops/${shopId}?populate[invoices]=*`; 
+//         const response = await fetch(`${url}/api/shops/${shopId}?populate[invoices]=*`);
+//         // const url = `${API_URL}/api/banks`; 
+
+//         const data = await response.json();
+//         console.log(data);
+//         return data;
+//     } catch (error) {
+//         console.error('Error fetching shop invoices:', error);
+//     }
+// };
+
+
+export const fetchShopInvoices = async (shopId) => {
+    try {
+        const url = `${API_URL}/api/shops/${shopId}?populate[invoices][populate]=redeem.customer`;
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error fetching invoices:', errorData);
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Invoices data received:", data);
+
+        // ดึง username จาก customer
+        if (data.data && data.data.attributes.invoices.data.length > 0) {
+            const invoices = data.data.attributes.invoices.data;
+            invoices.forEach(invoice => {
+                if (invoice.attributes.redeem && invoice.attributes.redeem.data) {
+                    const customer = invoice.attributes.redeem.data.attributes.customer.data.attributes;
+                    const username = customer.username; // ดึง username
+
+                    console.log("Customer Username:", username); // แสดง username
+                }
+            });
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error fetching invoices:', error);
+        throw error;
+    }
+};
+
+
+
+
+
+
+
 
 

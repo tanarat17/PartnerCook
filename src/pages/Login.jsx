@@ -13,11 +13,12 @@ const Login = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const { isReady, liff, error } = useLiff();
     const navigate = useNavigate();
-
+    const liffidChanal = import.meta.env.VITE_LIFF_ID;
+    // const lifid = localStorage.getItem('accessToken') || import.meta.env.VITE_TOKEN_TEST;
     useEffect(() => {
         const initializeLiff = async () => {
             try {
-                await liff.init({ liffId: "2006277696-kQM0MMde" }); 
+                await liff.init({ liffId: liffidChanal });
                 if (liff.isLoggedIn()) {
                     const token = liff.getAccessToken();
                     setAccessToken(token);
@@ -31,7 +32,7 @@ const Login = () => {
                     if (response) {
                         navigate('/partner/shopHome');  // เปลี่ยนเส้นทางไปยังหน้า home
                     } else {
-                        navigate('/partner/Profilestore');  // เปลี่ยนเส้นทางไปยังหน้า Register
+                        navigate('/partner/PDPA');  // เปลี่ยนเส้นทางไปยังหน้า Register
                     }
                 } else {
                     liff.login();
