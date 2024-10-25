@@ -8,7 +8,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import WebcamCapture from "../../components/WebcamCapture";
 import onion from "../../assets/images/onion.png";
-import { Grid, TextField, Button } from "@mui/material";
+import { Grid, TextField, Button, CircularProgress } from "@mui/material";
+
 import Swal from "sweetalert2";
 
 import {
@@ -33,7 +34,6 @@ const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337";
 const token = import.meta.env.VITE_TOKEN_TEST;
 const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-console.log(user);
 const userId = user.id;
 const userLineId = user.lineId;
 
@@ -45,6 +45,7 @@ export default function AddProduct() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [shopId, setShopId] = useState(null);
+  const [error, setError] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -56,13 +57,19 @@ export default function AddProduct() {
   });
 
   const fetchShops = async () => {
+    setLoading(true); // เริ่มต้นการโหลด
+
     try {
       const shopData = await getShopById(token, userId);
       if (shopData && typeof shopData === "object") {
         setShopId(shopData.shop.id);
+      } else {
+        throw new Error("Invalid shop data format");
       }
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการดึงข้อมูลร้านค้า:", error);
+
+      window.location.reload();
     } finally {
       setLoading(false);
     }
@@ -75,7 +82,6 @@ export default function AddProduct() {
   const fetchProducts = async () => {
     try {
       const fetchedProducts = await getAllProductsByShopId(token, shopId);
-      console.log("Front :: " + fetchedProducts);
       setProducts(fetchedProducts);
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการดึงข้อมูลสินค้า:", error);
@@ -106,7 +112,6 @@ export default function AddProduct() {
       // แจ้งเตือนเมื่อไม่เลือกภาพ
       Swal.fire({
         icon: "warning",
-        title: "กรุณาเลือกภาพ",
         text: "กรุณาเพิ่มรูปสินค้าก่อนทำการบันทึก",
       });
     }
@@ -117,7 +122,6 @@ export default function AddProduct() {
       if (!form.name || !form.numStock || !form.price || !form.type) {
         Swal.fire({
           icon: "warning",
-          title: "กรุณาตรวจสอบข้อมูลอีกครั้ง",
           text: "กรุณาตรวจสอบข้อมูลอีกครั้ง",
           position: "center",
           showConfirmButton: true,
@@ -129,7 +133,6 @@ export default function AddProduct() {
       if (form.numStock < 0 || form.price < 0) {
         Swal.fire({
           icon: "warning",
-          title: "ค่าติดลบไม่ถูกต้อง",
           text: "จำนวนและมูลค่าต้องเป็นค่าบวก",
           position: "center",
           showConfirmButton: true,
@@ -175,9 +178,9 @@ export default function AddProduct() {
 
       Swal.fire({
         icon: "success",
-        title: isEditing
-          ? "สินค้าถูกแก้ไขเรียบร้อยแล้ว"
-          : "สินค้าถูกเพิ่มเรียบร้อยแล้ว",
+        text: isEditing
+          ? "ทำการแก้ไขสินค้าเรียบร้อยแล้ว"
+          : "ทำการเพิ่มสินค้าเรียบร้อยแล้ว",
         position: "center",
         showConfirmButton: true,
         confirmButtonText: "ตกลง",
@@ -189,7 +192,6 @@ export default function AddProduct() {
       console.error("เกิดข้อผิดพลาดในการเพิ่ม/แก้ไขสินค้า:", error);
       await Swal.fire({
         icon: "error",
-        title: "Oops...",
         text: "เกิดข้อผิดพลาดในการเพิ่ม/แก้ไขสินค้า!",
         position: "center",
         showConfirmButton: true,
@@ -246,7 +248,20 @@ export default function AddProduct() {
   });
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="loading-spinner">
+        <div className="spinner"></div>
+        <p>กำลังทำการอัพเดทข้อมูล</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-message">
+        <p>{error}</p> {/* แสดงข้อความข้อผิดพลาด */}
+      </div>
+    );
   }
 
   return (
@@ -456,10 +471,10 @@ export default function AddProduct() {
 
               <div className="grid grid-cols-4 gap-4 py-5">
                 <p className="col-span-2 text-lg">จำนวนเงินทั้งหมด</p>
-                <p className="text-right text-lg">บาท</p>
                 <p className="text-center text-lg">
                   {product.price * product.numStock}
                 </p>
+                <p className="text-right text-lg">บาท</p>
               </div>
             </div>
           );

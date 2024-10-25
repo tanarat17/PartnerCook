@@ -43,7 +43,6 @@ const Header = () => {
         setIsLoading(true);
         const shopData = await getShopById(token, userId);
 
-        console.log("Fetched shop data:", shopData);
 
         if (shopData && typeof shopData === "object" && shopData.shop) {
           setShopData([shopData.shop]);

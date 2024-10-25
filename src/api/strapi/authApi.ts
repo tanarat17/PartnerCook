@@ -9,8 +9,6 @@ export const authenticateUser = async (
   try {
     const url = `${API_URL}/api/auth/local`;
 
-    console.log("identifier: ", identifier, " password: ", password);
-
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -41,9 +39,6 @@ export const authenticateUser = async (
 export const registerUser = async (userData: Record<string, any>) => {
   try {
     const url = `${API_URL}/api/auth/local/register`;
-    console.log("userData user ts: ", userData.username);
-    console.log("userData mail ts: ", userData.email);
-    console.log("userData pwd ts: ", userData.password);
 
     const response = await fetch(url, {
       method: "POST",

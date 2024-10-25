@@ -1,8 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Checkbox,
+  CircularProgress
+} from "@mui/material";
 const LoginRegister = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
 
   const handleRegister = () => {
     navigate('/register'); // เปลี่ยนไปที่หน้า Register
@@ -11,7 +21,9 @@ const LoginRegister = () => {
   const handleLogin = () => {
     navigate('/Login'); // เปลี่ยนไปที่หน้า App
   };
-
+  if (loading) {
+    return <CircularProgress />;
+  }
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <h1 className="text-4xl font-semibold text-gray-800 mb-6 text-center">

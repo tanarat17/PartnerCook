@@ -126,7 +126,6 @@ function Register() {
     // Call the createUser function to send the formData to the API
     // Call the createUser function to send the formData to the API
     const response = await createUser(userData, token);
-    console.log("response: ", response);
     if (response) {
       // Assuming that the API response contains an "id" field if registration was successful
       alert("User registered successfully!");

@@ -13,7 +13,7 @@ describe('loginWithLineId', () => {
         expect(result.user).toHaveProperty('username');
         expect(result.user.username).equal('cook1234');
         expect(result.user.email).equal('cook1234@cook.com');
-        console.log('Login successful:', result);
+        // console.log('Login successful:', result);
     });
 
     it('should return false when authentication fails', async () => {
@@ -21,6 +21,6 @@ describe('loginWithLineId', () => {
         const result = await loginWithLineId(lineId);
 
         expect(result).toBe(false);
-        console.log('Login failed as expected with invalid LINE ID.');
+        // console.log('Login failed as expected with invalid LINE ID.');
     });
 });

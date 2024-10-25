@@ -31,7 +31,6 @@ describe('getAllProductsByShopId', () => {
         expect(product.shop).toHaveProperty('latitude');
         expect(product.shop).toHaveProperty('longitude');
 
-        console.log('Products fetched successfully:', products);
     });
 
     it('should throw an error if the token is invalid', async () => {

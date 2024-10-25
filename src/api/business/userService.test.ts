@@ -26,7 +26,6 @@ describe('updateUser (Business Logic)', () => {
         expect(updatedUser).toHaveProperty('telNumber', userData.telNumber);
         // expect(updatedUser).toHaveProperty('photoImage', userData.photoImage);
 
-        console.log('User updated successfully in business logic:', updatedUser);
     });
 
     it('should throw an error if the token is invalid', async () => {

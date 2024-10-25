@@ -98,8 +98,16 @@ export const getShopById = async (token, userId) => {
       }
     );
 
+    // ใช้ response.text() เพื่ออ่านเนื้อหาเป็น text ก่อน
+    const textResponse = await response.text();
+    // ตรวจสอบสถานะของการตอบกลับ
     if (!response.ok) {
-      const errorData = await response.json();
+      let errorData;
+      try {
+        errorData = JSON.parse(textResponse);
+      } catch (err) {
+        errorData = { message: textResponse || "Unknown error" };
+      }
       console.error("Error fetching shop by ID:", errorData);
       throw new Error(
         `Request failed with status ${response.status}: ${
@@ -108,8 +116,7 @@ export const getShopById = async (token, userId) => {
       );
     }
 
-    // ใช้ response.json() แทน response.text()
-    const data = await response.json();
+    const data = JSON.parse(textResponse);
 
     if (!data || !data.shop) {
       throw new Error("No shop data returned from the server");
@@ -120,13 +127,6 @@ export const getShopById = async (token, userId) => {
     console.error("Error fetching shop by ID:", error);
     throw error;
   }
-};
-
-const getRedeemByShop = async (shopId) => {
-  const response = await fetch(`/shops/${shopId}?populate=redeems`);
-  const data = await response.json();
-  console.log("GetRedeemBtShop : " + data);
-  return data.redeems;
 };
 
 export const createShop = async (
@@ -164,16 +164,13 @@ export const updateUserFromShop = async (
   userId: string,
   userData: Record<string, any>
 ) => {
-  console.log("updateUserFromShop :: ");
-  console.log("UserID :: " + userId);
-  console.log("UserData :: " + userData);
   try {
     const url = `${API_URL}/api/users/${userId}`;
 
     const response = await fetch(url, {
       method: "PUT",
       headers: {
-        // Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, // เปิดการใช้งาน Authorization
         "Content-Type": "application/json",
       },
       body: JSON.stringify(userData),
@@ -181,14 +178,14 @@ export const updateUserFromShop = async (
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error creating UserFromShop:", errorData);
+      console.error("Error updating UserFromShop:", errorData);
       throw new Error(`Request failed with status ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error creating UserFromShop:", error.message);
+    console.error("Error updating UserFromShop:", error.message);
     throw error;
   }
 };
@@ -198,9 +195,7 @@ export const getAllShopById = async (
   shopId: number
 ): Promise<Shop[]> => {
   try {
-    console.log("Fetching Shop for shop ID:", shopId);
     const url = `${API_URL}/api/Shops?populate[image]=true&populate[shop]=true&filters[shop][$eq]=${shopId}`;
-    console.log("GET Request URL:", url);
 
     const response = await fetch(url, {
       method: "GET",
@@ -220,7 +215,6 @@ export const getAllShopById = async (
     }
 
     const data = await response.json();
-    console.log("Fetched Products Data:", data);
 
     if (!data.data || !Array.isArray(data.data)) {
       console.error("Fetched data is not an array:", data);
@@ -259,7 +253,6 @@ export const getAllShopById = async (
       };
     });
 
-    console.log("Parsed Products:", products);
     return products;
   } catch (error: any) {
     console.error("Error fetching products:", error.message);
@@ -328,7 +321,6 @@ export const getBank = async (token: string): Promise<Bank[]> => {
       publishedAt: item.attributes.publishedAt,
     }));
 
-    console.log(banksData);
     return banksData;
   } catch (error) {
     console.error("Error fetching banks:", error.message);
@@ -355,7 +347,6 @@ export const fetchShopInvoices = async (shopId) => {
     }
 
     const data = await response.json();
-    console.log("Invoices data received:", data);
     return data;
   } catch (error) {
     console.error("Error fetching invoices:", error);
@@ -387,28 +378,29 @@ export const fetchShopRedeem = async (shopId) => {
   }
 };
 
-const updateRedeemStatus = async (token, redeemId, updateData) => {
+export const UpdateRedeems = async (id, data) => {
+  // console.log(" ID From Front :: " + id)
+  // console.log(" Data From Front :: " + data)
+  // return 0;
+
   try {
-    const url = `http://localhost:1337/api/redeems/${redeemId}`;
+    const url = `${API_URL}/api/redeems/${id}`;
     const response = await fetch(url, {
       method: "PUT",
       headers: {
+        accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ data: updateData }),
+      body: JSON.stringify({ data }),
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Error updating Redeem status:", errorData);
-      throw new Error(`Request failed with status ${response.status}`);
+      throw new Error("เกิดข้อผิดพลาดขณะทำการบันทึก");
     }
-
-    const data = await response.json();
-    return data;
+    const result = await response.json();
+    return result;
   } catch (error) {
-    console.error("Error updating Redeem status:", error);
+    console.error("Error updating redeem:", error);
     throw error;
   }
 };

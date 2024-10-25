@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useLiff } from "react-liff";
 import { useNavigate } from "react-router-dom";
 import { loginWithLineId } from "./api/business/login";
+
 import "./App.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337";
@@ -39,7 +40,7 @@ const App = () => {
         }
 
         await liff.init({ liffId: LiffPartner });
-        console.log("LIFF initialized successfully.");
+        // console.log("LIFF initialized successfully.");
 
         if (liff.isLoggedIn()) {
           const profile = await liff.getProfile();
@@ -52,7 +53,7 @@ const App = () => {
             const { jwt, user } = response;
             localStorage.setItem("accessToken", jwt);
             localStorage.setItem("user", JSON.stringify(user));
-            console.log("Token and user data saved to localStorage");
+            // console.log("Token and user data saved to localStorage");
             navigate("/partner/shopHome");
           }
         } else {
@@ -81,7 +82,9 @@ const App = () => {
   if (loading) {
     return (
       <div className="App">
-        <p>Loading...</p>
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+        </div>
       </div>
     );
   }

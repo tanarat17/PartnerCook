@@ -5,6 +5,16 @@ import { useLiff } from 'react-liff';
 import { useNavigate } from 'react-router-dom';
 import { loginWithLineId } from '../api/business/login';
 import { createUser, getUser } from '../api/strapi/userApi';
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Checkbox,
+  CircularProgress
+} from "@mui/material";
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,6 +23,8 @@ const Login = () => {
   const [accessToken, setAccessToken] = useState('');
   const [userData, setUserData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const initializeLiff = async () => {
@@ -62,6 +74,9 @@ const Login = () => {
       return null;
     }
   };
+   if (loading) {
+    return <CircularProgress />;
+  }
 
   return (
     <div>

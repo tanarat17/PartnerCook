@@ -15,8 +15,6 @@ describe('fetchAndFilterApprovedProducts', () => {
         products.forEach(product => {
             expect(product.approved).toBe(true);
         });
-
-        console.log('Approved products:', products);
     });
 
     it('should throw an error if the token is invalid', async () => {

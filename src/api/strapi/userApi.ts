@@ -40,7 +40,6 @@ export const getUser = async (userId: string, token: string): Promise<User> => {
   try {
     // Use query parameters to filter by lineId if necessary
     const lowerCaseUserId = userId.toLowerCase(); // แปลง userId เป็นตัวพิมพ์เล็ก
-    console.log("lowerCaseUserId", lowerCaseUserId);
     const url = `${API_URL}/api/users?populate[photoImage]=true&filters[lineId][$eq]=${lowerCaseUserId}`;
     // const url = `${API_URL}/api/users`;
 
@@ -62,7 +61,6 @@ export const getUser = async (userId: string, token: string): Promise<User> => {
       );
     }
     const data = await response.json();
-    console.log("data", data); // Log to inspect the structure of the response
 
     // Check if data.data exists and is an array
     if (!data || !Array.isArray(data)) {
@@ -71,9 +69,6 @@ export const getUser = async (userId: string, token: string): Promise<User> => {
       );
     }
 
-    // // If data.data is an empty array
-    console.log("data.data.length", data.length); // Log the data to check if it's an array
-    console.log("data[0].attributes.username", data[0].username); // Log the first item in the array to check the structure
     if (data.length === 0) {
       throw new Error("No user found with the provided lineId.");
     }
@@ -93,7 +88,6 @@ export const getUser = async (userId: string, token: string): Promise<User> => {
       photoImage: data[0].photoImage,
     };
 
-    console.log("users", user); // Log users to check if the mapping worked correctly
     return user;
   } catch (error: any) {
     console.error("Error fetching user:", error.message);
@@ -106,7 +100,6 @@ export const createUser = async (
   token: string
 ): Promise<User> => {
   try {
-    console.log("userData in createUser: ", userData);
     const url = `${API_URL}/api/auth/local/register`; // Adjust the endpoint as per your API structure
 
     const response = await fetch(url, {
@@ -117,7 +110,6 @@ export const createUser = async (
       },
       body: JSON.stringify(userData),
     });
-    console.log("body: ", JSON.stringify(userData));
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Error:", errorData);

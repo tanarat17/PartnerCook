@@ -9,11 +9,17 @@ import {
   MenuItem,
   Checkbox,
   Button,
+  CircularProgress,
 } from "@mui/material";
+
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import WebcamCapture from "../../components/WebcamCapture";
 import WebcamCapture2 from "../../components/WebcamCapture2";
-import { createShop, getBank, getShopById } from "../../api/strapi/shopApi";
+import {
+  updateUserFromShop,
+  getBank,
+  getShopById,
+} from "../../api/strapi/shopApi";
 import { uploadImage } from "../../api/strapi/uploadApi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -63,14 +69,9 @@ function ProfileStoreEdit() {
       try {
         setLoading(true);
         const shopData = await getShopById(token, userId); // เรียก API
-
-        console.log("Fetched shop data:", shopData); // แสดงข้อมูลที่ได้รับจาก API
-
         if (shopData && typeof shopData === "object") {
           setShops([shopData]); // ตั้งค่า shops ด้วยข้อมูลที่ได้รับ
           // อัปเดตค่าฟอร์มด้วยข้อมูลที่ได้รับ
-
-          console.log(" FRONT SHOP DATA" + shopData);
           setFormData({
             name: shopData.shop.name || "",
             fullName: shopData.fullName || "",
@@ -138,14 +139,41 @@ function ProfileStoreEdit() {
       }));
     }
   };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // ที่นี่จะมีฟังก์ชันในการบันทึกข้อมูล
-    console.log("Form submitted:", formData);
+
+    try {
+      // แสดง SweetAlert เพื่อยืนยันการส่งฟอร์ม
+      const result = await Swal.fire({
+        text: "ต้องการบันทึกข้อมูลใช่หรือไม่ ?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "บันทึก",
+        cancelButtonText: "ยกเลิก",
+      });
+
+      if (result.isConfirmed) {
+        const response = await updateUserFromShop(token, userId, formData);
+
+        // แสดงข้อความสำเร็จ
+        await Swal.fire({
+          text: "ทำการแก้ไขข้อมูลร้านค้าเรียบร้อยแล้ว",
+          icon: "success",
+        });
+        navigate("/shopHome");
+      }
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการส่งข้อมูล:", error);
+      await Swal.fire({
+        icon: "error",
+        text: "เกิดข้อผิดพลาดในการส่งข้อมูล!",
+      });
+    }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return <CircularProgress />;
+  }
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -247,7 +275,8 @@ function ProfileStoreEdit() {
 
             <div className="w-full px-2 mt-4">
               <div>
-                <label>ถ่ายรูปตนเองพร้อมถือบัตรประจำตัวประชาชน</label>
+                <label style={{ color: "red" }}>* </label>{" "}
+                ถ่ายรูปตนเองพร้อมถือบัตรประจำตัวประชาชน
               </div>
               <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
                 <WebcamCapture
@@ -276,7 +305,7 @@ function ProfileStoreEdit() {
 
             <div className="w-full px-2 mt-4">
               <div>
-                <label>ถ่ายหน้าบุ๊คแบงก์</label>
+                <label style={{ color: "red" }}>* </label> ถ่ายหน้าบุ๊คแบงก์
               </div>
               <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
                 <WebcamCapture
@@ -329,11 +358,13 @@ function ProfileStoreEdit() {
             required
             sx={{ "& .MuiSvgIcon-root": { fontSize: 30 } }}
           />
-          <span>
-            <strong style={{ color: "red" }}>ยอมรับเงื่อนไข </strong>
-            {
-              "การเปิดเผยข้อมูลอย่างชัดเจนในกรณีที่ผู้ใช้อาจไม่คาดคิดว่าจำเป็นต้องใช้ข้อมูลส่วนบุคคลและข้อมูลที่ละเอียดอ่อนของตนสำหรับฟีเจอร์หรือฟังก์ชันการทำงานภายในแอปที่เป็นไปตามข้อกำหนดของนโยบาย"
-            }
+           <span className="pb-14">
+           <strong style={{ color: 'red', marginRight: '10px' }}>กุ๊ก</strong>ให้ความสำคัญเกี่ยวกับความปลอดภัยข้อมูลของคุณ{" "}
+            <span className="text-justify leading-loose">
+              และเพื่อให้คุณมั่นใจว่า
+              กุ๊กมีความมุ่งมั่นที่จะให้ความคุ้มครองและดำเนินการด้วยความรับผิดชอบต่อการเก็บรวบรวม
+              ใช้ เปิดเผย และโอนข้อมูลของคุณ กุ๊กจึงขอความยินยอมจากคุณ
+            </span>
           </span>
         </div>
 

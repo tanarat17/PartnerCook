@@ -6,9 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1400";
 
 export const getRedeemByUserId = async (token: string, userId: string) => {
   try {
-    console.log("getRedeemByUserId : " + userId);
     const url = `${API_URL}/api/redeems/${userId}`;
-
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -120,9 +118,7 @@ export const updateRedeem = async (
       console.error("Error updating Product:", errorData);
       throw new Error(`Request failed with status ${response.status}`);
     }
-
     const data = await response.json();
-    console.log("Updated Product Data:", data);
     sendMessageCreateProduct(userLineId);
     return data;
   } catch (error: any) {
@@ -132,8 +128,6 @@ export const updateRedeem = async (
 };
 
 export const fetchRedeemData = async (productId, shopId) => {
-  console.log("Handle Redeem Back : " + productId, shopId);
-
   try {
     const response = await fetch(
       `${API_URL}/api/redeems?filters[shop][$eq]=${shopId}&filters[productJsonArray][$contains]=${JSON.stringify(
@@ -172,8 +166,6 @@ export const getRedeemByShop = async (token, shopId) => {
     }
 
     const data = await response.json();
-
-    console.log("Redeem " + data);
     return data;
   } catch (error) {
     console.error("Error fetching Redeem data:", error);
@@ -196,8 +188,6 @@ export const updateRedeemStatus = async (redeemId) => {
     if (!response.ok) {
       throw new Error(`Failed to update redeem status: ${response.statusText}`);
     }
-
-    console.log("Redeem status updated successfully");
   } catch (error) {
     console.error("Error updating redeem status:", error);
   }

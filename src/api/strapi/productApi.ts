@@ -9,9 +9,7 @@ export const getAllProductsByShopId = async (
   shopId: number
 ): Promise<Product[]> => {
   try {
-    console.log("Fetching products for shop ID:", shopId);
     const url = `${API_URL}/api/products?populate[image]=true&populate[shop]=true&filters[shop][$eq]=${shopId}`;
-    console.log("GET Request URL:", url);
 
     const response = await fetch(url, {
       method: "GET",
@@ -33,7 +31,6 @@ export const getAllProductsByShopId = async (
     }
 
     const data = await response.json();
-    console.log("Fetched Products Data:", data);
 
     if (!data.data || !Array.isArray(data.data)) {
       console.error("Fetched data is not an array:", data);
@@ -41,7 +38,6 @@ export const getAllProductsByShopId = async (
     }
 
     const products: Product[] = data.data.map((item: any, index: number) => {
-      console.log(`Processing product ${index}:`, item);
       if (!item || typeof item !== "object" || !item.attributes) {
         console.error(`Invalid product at index ${index}:`, item);
         throw new Error(`Invalid product data at index ${index}`);
@@ -75,7 +71,6 @@ export const getAllProductsByShopId = async (
       };
     });
 
-    console.log("Parsed Products:", products);
     return products;
   } catch (error: any) {
     console.error("Error fetching products:", error.message);
@@ -152,7 +147,6 @@ export const updateProduct = async (
     }
 
     const data = await response.json();
-    console.log("Updated Product Data:", data);
     sendMessageCreateProduct(userLineId);
     return data;
   } catch (error: any) {
@@ -208,7 +202,6 @@ export const getProductByID = async (
   productData: Record<string, any>
 ) => {
   try {
-    console.log("getProductByID", productId);
     const url = `${API_URL}/api/products/${productId}`;
     const response = await fetch(url, {
       method: "GET",
@@ -227,10 +220,7 @@ export const getProductByID = async (
         }`
       );
     }
-
     const data = await response.json();
-    console.log("Response ProductAPI :", data);
-
     if (data.data) {
       const product = data.data;
 
@@ -249,13 +239,6 @@ export const getProductByID = async (
         attributes.approved !== undefined
           ? attributes.approved
           : "สถานะไม่ระบุ"; // ตรวจสอบสถานะการอนุมัติ
-
-      console.log(`Product ID: ${id}`);
-      console.log(`Product Name: ${name}`);
-      console.log(`Description: ${description}`);
-      console.log(`Price: ${price}`);
-      console.log(`Number in Stock: ${numStock}`);
-      console.log(`Approved: ${approved}`);
 
       return { id, name, description, price, numStock, approved };
     } else {

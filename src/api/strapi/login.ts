@@ -15,8 +15,6 @@ export const loginWithLineId = async (lineId: string) => {
 
   try {
     const result = await authenticateUser(identifier, password);
-    console.log("result:", result);
-
     return {
       jwt: result.jwt,
       user: {

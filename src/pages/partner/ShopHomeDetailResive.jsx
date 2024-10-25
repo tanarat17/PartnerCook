@@ -19,7 +19,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { motion } from "framer-motion";
 import { getProductByID } from "../../api/strapi/productApi";
 import Swal from "sweetalert2";
-import { getShopById, fetchShopRedeem } from "../../api/strapi/shopApi";
+import { getShopById, UpdateRedeems } from "../../api/strapi/shopApi";
+import { Grid, TextField, Button, CircularProgress } from "@mui/material";
 
 import "./css/Togle.css"; // ไฟล์ CSS สำหรับ switch
 
@@ -50,14 +51,12 @@ function ShopHomeDetailResive() {
   // ดึงข้อมูลสินค้าที่ถูก redeem
   useEffect(() => {
     const fetchData = async () => {
-      console.log("Row Data From Scan: " + rawData);
       if (rawData) {
         try {
           const cleanData = rawData.replace(/^"|"$/g, "").trim();
           const parsedItems = JSON.parse(cleanData);
           setParsedItems(parsedItems); // เพิ่มการตั้งค่า parsedItems
           setItems(parsedItems);
-          console.log("Parsed Items from Scan: ", parsedItems);
 
           if (parsedItems.length > 0) {
             const uniqueProducts = new Set();
@@ -93,13 +92,10 @@ function ShopHomeDetailResive() {
       setIsLoading(true);
       try {
         const shopData = await getShopById(token, userId);
-        console.log("Shop Data Front Redeem: ", shopData);
 
         if (shopData && shopData.shop && shopData.shop.redeems) {
           setRedeems(shopData.shop.redeems);
-          console.log("Redeems: ", shopData.shop.redeems);
         } else {
-          console.log("No redeems available.");
         }
       } catch (error) {
         console.error("Error fetching redeems: ", error);
@@ -118,17 +114,11 @@ function ShopHomeDetailResive() {
         const cleanData = rawData.replace(/^"|"$/g, "").trim();
         const parsedItems = JSON.parse(cleanData);
 
-        console.log("Parsed Items from Scan: ", parsedItems);
-        console.log("Product Details: ", productDetails);
-
         const matchingProducts = parsedItems.filter((item) =>
           productDetails.some((product) => product.id === item.id)
         );
 
-        console.log("Matching Products: ", matchingProducts);
-
         if (matchingProducts.length > 0) {
-          console.log("Match");
 
           if (redeems && Array.isArray(redeems)) {
             const validRedeems = redeems.filter(
@@ -159,7 +149,7 @@ function ShopHomeDetailResive() {
                     }).length;
 
                     if (matchCount > 0) {
-                      console.log("Redeem Details: ", redeem);
+                      setRedeem(redeem);
                     }
                   });
                 } else {
@@ -180,7 +170,6 @@ function ShopHomeDetailResive() {
             console.error("Redeems is not defined or not an array:", redeems);
           }
         } else {
-          console.log("Not Match");
         }
       }
     };
@@ -198,16 +187,48 @@ function ShopHomeDetailResive() {
       }, 0)
     : 0;
 
-  // ฟังก์ชัน Toggle
-  const handleToggle = () => {
-    setIsToggled((prev) => !prev);
-    console.log("Toggle switch state:", !isToggled);
+  const handleToggle = async () => {
+    if (!isToggled && redeem) {
+      const redeemId = redeem.id;
+      const redeemData = {
+        status: "approved",
+      };
+      //   console.log("Before Update Redeem ::: ", redeemData);
+      try {
+        const updatedRedeem = await UpdateRedeems(redeemId, redeemData);
+        // console.log("Updated Redeem: ", updatedRedeem);
+        setIsToggled(true);
+
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          text: "บันทึกการจัดส่งสินค้าเรียบร้อย",
+          showConfirmButton: true,
+          confirmButtonText: "ตกลง",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate("/shopHome");
+          }
+        });
+      } catch (error) {
+        console.error("Failed to update redeem:", error);
+
+        Swal.fire({
+          icon: "error",
+          text: error.message || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+          position: "center",
+          confirmButtonText: "ตกลง",
+        });
+      }
+    }
   };
 
   const handleClose = () => {
     console.log("Card closed");
   };
-
+  if (loading) {
+    return <CircularProgress />;
+  }
   return (
     <>
       <Header />
@@ -218,14 +239,7 @@ function ShopHomeDetailResive() {
         style={{ minHeight: "40vh", marginBottom: "30px" }}
       >
         <Card style={{ width: "80%", maxWidth: "800px" }}>
-          <CardHeader
-            style={{ backgroundColor: "#800020", color: "white" }}
-            action={
-              <IconButton onClick={handleClose} style={{ color: "white" }}>
-                <CloseIcon />
-              </IconButton>
-            }
-          />
+          <CardHeader style={{ backgroundColor: "#800020", color: "white" }} />
           <CardContent>
             <Typography
               variant="h6"
@@ -245,7 +259,7 @@ function ShopHomeDetailResive() {
                       sx={{
                         textAlign: "left",
                         fontFamily: "Sarabun, sans-serif",
-                        fontSize: "12px",
+                        fontSize: "13px",
                         fontWeight: "bold",
                       }}
                     >
@@ -255,7 +269,7 @@ function ShopHomeDetailResive() {
                       sx={{
                         textAlign: "center",
                         fontFamily: "Sarabun, sans-serif",
-                        fontSize: "12px",
+                        fontSize: "13px",
                         fontWeight: "bold",
                       }}
                     >
@@ -265,7 +279,7 @@ function ShopHomeDetailResive() {
                       sx={{
                         textAlign: "left",
                         fontFamily: "Sarabun, sans-serif",
-                        fontSize: "12px",
+                        fontSize: "13px",
                         fontWeight: "bold",
                       }}
                     >
@@ -317,11 +331,7 @@ function ShopHomeDetailResive() {
                       );
                     })
                   ) : (
-                    <TableRow>
-                      <TableCell colSpan={4} sx={{ textAlign: "center" }}>
-                        ไม่มีข้อมูลผลิตภัณฑ์
-                      </TableCell>
-                    </TableRow>
+                    <TableRow></TableRow>
                   )}
                 </TableBody>
               </Table>
@@ -332,7 +342,7 @@ function ShopHomeDetailResive() {
                 textAlign: "center",
                 marginBottom: "16px",
                 fontFamily: "Sarabun",
-                fontSize: "12px",
+                fontSize: "14px",
                 fontWeight: "bold",
               }}
             >
@@ -341,6 +351,8 @@ function ShopHomeDetailResive() {
           </CardContent>
         </Card>
       </Box>
+      {/* *************************************************************************************** */}
+      {/* //สำหรับการจัดส่งสินค้า */}
       <Box
         display="flex"
         justifyContent="center"
@@ -348,14 +360,7 @@ function ShopHomeDetailResive() {
         style={{ minHeight: "20vh" }}
       >
         <Card style={{ width: "80%", maxWidth: "800px" }}>
-          <CardHeader
-            style={{ backgroundColor: "#800020", color: "white" }}
-            action={
-              <IconButton onClick={handleClose} style={{ color: "white" }}>
-                <CloseIcon />
-              </IconButton>
-            }
-          />
+          <CardHeader style={{ backgroundColor: "#800020", color: "white" }} />
           <CardContent
             sx={{
               display: "flex",
@@ -370,7 +375,7 @@ function ShopHomeDetailResive() {
               variant="h6"
               sx={{
                 fontFamily: "Sarabun, sans-serif",
-                fontSize: "18px",
+                fontSize: "14px",
                 textAlign: "center",
                 marginBottom: "20px",
               }}
@@ -412,7 +417,7 @@ function ShopHomeDetailResive() {
                     background: "white",
                     position: "absolute",
                     top: 2,
-                    left: isToggled ? 175 : 5, // ปรับตำแหน่งให้เข้ากับความยาวใหม่
+                    left: isToggled ? 175 : 5,
                     transition: "left 0.2s",
                   }}
                 />
@@ -421,6 +426,7 @@ function ShopHomeDetailResive() {
           </CardContent>
         </Card>
       </Box>
+      {/* *************************************************************************************** */}
     </>
   );
 }

@@ -2,6 +2,7 @@ import Header from "../../components/partner/Header";
 import { Link } from "react-router-dom";
 import { getShopById } from "../../api/strapi/shopApi";
 import { useState, useEffect } from "react";
+import { Grid, TextField, Button, CircularProgress } from "@mui/material";
 
 function PartnerHome() {
   const [shopData, setShopData] = useState([]);
@@ -18,8 +19,6 @@ function PartnerHome() {
       try {
         setIsLoading(true);
         const shopData = await getShopById(token, userId);
-
-        console.log("Fetched shop data:", shopData);
 
         if (shopData && typeof shopData === "object" && shopData.shop) {
           setShopData([shopData.shop]);
@@ -38,7 +37,10 @@ function PartnerHome() {
     fetchPartnerData();
   }, [token, userId]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) {
+    return <CircularProgress />;
+  }
+
   if (fetchError) return <p>{fetchError}</p>;
 
   return (

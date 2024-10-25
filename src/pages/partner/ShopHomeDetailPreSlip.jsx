@@ -123,11 +123,6 @@ function ShopHomeDetailPreSlip() {
                   <Grid item xs={12} md={6} lg={4} key={invoice.id}>
                     <Card>
                       <CardHeader
-                        action={
-                          <IconButton aria-label="close">
-                            <CloseIcon />
-                          </IconButton>
-                        }
                         title={`เลขที่ใบแจ้งหนี้: ${invoice.attributes.invoiceNumber}`}
                       />
                       <CardContent>
@@ -178,7 +173,20 @@ function ShopHomeDetailPreSlip() {
                             mt: 2,
                           }}
                         >
-                          <Button variant="contained" color="warning">
+                          {/* <Button variant="contained" color="warning">
+                            ดูใบเสร็จ
+                          </Button> */}
+                          <Button
+                            variant="contained"
+                            sx={{
+                              backgroundColor: "#FBB615",
+                              "&:hover": {
+                                backgroundColor: "#f9a623",
+                              },
+                            }}
+                            // startIcon={<FaRegSave />}
+                            // onClick={handleSubmit}
+                          >
                             ดูใบเสร็จ
                           </Button>
                           {invoice.attributes.status === "paid" ? (

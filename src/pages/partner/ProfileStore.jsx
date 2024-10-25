@@ -10,6 +10,7 @@ import {
   MenuItem,
   Select,
   Checkbox,
+  CircularProgress,
 } from "@mui/material";
 import WebcamCapture from "../../components/WebcamCapture";
 import WebcamCapture2 from "../../components/WebcamCapture2";
@@ -51,7 +52,6 @@ export default function ProfileStore() {
   const [banks, setBanks] = useState([]); // สำหรับเก็บข้อมูลธนาคาร
   const [loading, setLoading] = useState(true);
 
-  console.log("Front : ", user);
   const handleInputChange = (e) => {
     const { id, name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -86,7 +86,6 @@ export default function ProfileStore() {
 
   useEffect(() => {}, [banks]);
 
-  console.log("Bank", banks);
   const handleCaptureBookBankImage = (imageFile) => {
     if (imageFile) {
       setFormData((prevData) => ({
@@ -155,9 +154,7 @@ export default function ProfileStore() {
       };
 
       // อัปเดตข้อมูลผู้ใช้
-      console.log("Sending user data:", userData);
       const responseUser = await updateUserFromShop(token, userId, userData);
-      console.log("Response from updateUserFromShop:", responseUser);
       if (!responseUser || responseUser.error) {
         console.error("Error updating user:", responseUser);
       }
@@ -185,7 +182,7 @@ export default function ProfileStore() {
         Swal.fire({
           position: "center",
           icon: "success",
-          title: "ลงทะเบียนร้านค้าเรียบร้อย",
+          text: "ลงทะเบียนร้านค้าเรียบร้อยแล้ว",
           showConfirmButton: true,
           confirmButtonText: "ตกลง",
         }).then((result) => {
@@ -200,14 +197,15 @@ export default function ProfileStore() {
       console.error("Error during submission:", error);
       Swal.fire({
         icon: "error",
-        title: "พบข้อผิดพลาดระหว่างลงทะเบียน",
         position: "center",
-        text: error.message || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง", // ปรับให้แสดงข้อความของ error ที่เกิดขึ้น
+        text: error.message || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
         confirmButtonText: "ตกลง",
       });
     }
   };
-
+  if (loading) {
+    return <CircularProgress />;
+  }
   return (
     <ThemeProvider theme={theme}>
       <Header />
@@ -377,7 +375,8 @@ export default function ProfileStore() {
 
             <div className="w-full px-2 mt-4">
               <div>
-                <label>ถ่ายรูปตนเองพร้อมถือบัตรประจำตัวประชาชน</label>
+                <label style={{ color: "red" }}>* </label>{" "}
+                ถ่ายรูปตนเองพร้อมถือบัตรประจำตัวประชาชน
               </div>
               <WebcamCapture
                 className="bg-white"
@@ -386,9 +385,8 @@ export default function ProfileStore() {
                 ModuleName="IDCard"
               />
             </div>
-
             <div className="w-full px-2 mt-4">
-              <label>ถ่ายหน้าบุ๊คแบงก์</label>
+              <label style={{ color: "red" }}>* </label> ถ่ายหน้าบุ๊คแบงก์
               <WebcamCapture2
                 className="bg-white"
                 id="bookBankImage"
@@ -422,8 +420,13 @@ export default function ProfileStore() {
             required
             sx={{ "& .MuiSvgIcon-root": { fontSize: 30 } }}
           />
-          <span>
-            <strong>ยอมรับเงื่อนไข</strong>{" "}
+         <span className="pb-14">
+         <strong style={{ color: 'red', marginRight: '10px' }}>กุ๊ก</strong>ให้ความสำคัญเกี่ยวกับความปลอดภัยข้อมูลของคุณ{" "}
+            <span className="text-justify leading-loose">
+              และเพื่อให้คุณมั่นใจว่า
+              กุ๊กมีความมุ่งมั่นที่จะให้ความคุ้มครองและดำเนินการด้วยความรับผิดชอบต่อการเก็บรวบรวม
+              ใช้ เปิดเผย และโอนข้อมูลของคุณ กุ๊กจึงขอความยินยอมจากคุณ
+            </span>
           </span>
         </div>
 
