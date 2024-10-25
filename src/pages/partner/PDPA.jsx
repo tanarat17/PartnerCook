@@ -67,12 +67,14 @@ export default function PDPA() {
           </span>
         </div>
         <NavLink to="/partner/Profilestore">
-            <button 
-            className={`w-full h-10 mt-4 mb-4 rounded-md ${isChecked ? 'bg-yellow-hard-bg' : 'bg-zinc-400'}`} 
+          <button
+            className={`w-full h-10 mt-4 mb-4 rounded-md ${
+              isChecked ? "bg-yellow-hard-bg" : "bg-zinc-400"
+            }`}
             disabled={!isChecked}
-            >
+          >
             ต่อไป
-            </button>
+          </button>
         </NavLink>
       </Container>
     </>

@@ -131,7 +131,7 @@ const WebcamCapture = ({ onCapture, ModuleName }) => {
   const startWebcam = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" }
+        video: { facingMode: "user" },
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -142,17 +142,18 @@ const WebcamCapture = ({ onCapture, ModuleName }) => {
       // alert("ไม่สามารถเข้าถึงเว็บแคมได้ กรุณาตรวจสอบการตั้งค่าและอนุญาตการเข้าถึง");
       Swal.fire({
         icon: "error",
-        title: "ไม่สามารถเข้าถึงเว็บแคมได้ กรุณาตรวจสอบการตั้งค่าและอนุญาตการเข้าถึง",
-        position: 'center',
+        title:
+          "ไม่สามารถเข้าถึงเว็บแคมได้ กรุณาตรวจสอบการตั้งค่าและอนุญาตการเข้าถึง",
+        position: "center",
         showConfirmButton: true,
         confirmButtonText: "ตกลง",
-      })
+      });
     }
   };
 
   const stopWebcam = () => {
     if (mediaStream) {
-      mediaStream.getTracks().forEach(track => {
+      mediaStream.getTracks().forEach((track) => {
         track.stop();
       });
       setMediaStream(null);
@@ -172,14 +173,16 @@ const WebcamCapture = ({ onCapture, ModuleName }) => {
 
         canvas.toBlob((blob) => {
           if (blob) {
-            const currentDateTime = new Date().toLocaleString().replace(/[/,:]/g, '-');
+            const currentDateTime = new Date()
+              .toLocaleString()
+              .replace(/[/,:]/g, "-");
             const newName = `image_${ModuleName}_${currentDateTime}.jpg`;
-            const file = new File([blob], newName, { type: 'image/jpeg' });
+            const file = new File([blob], newName, { type: "image/jpeg" });
             setCapturedImage(URL.createObjectURL(blob));
             stopWebcam();
             onCapture(file);
           }
-        }, 'image/jpeg');
+        }, "image/jpeg");
       }
     }
   };
@@ -189,10 +192,10 @@ const WebcamCapture = ({ onCapture, ModuleName }) => {
     Swal.fire({
       icon: "warning",
       title: "ฟังก์ชันการอัพโหลดภาพยังไม่ได้เปิดใช้งาน",
-      position: 'center',
+      position: "center",
       showConfirmButton: true,
       confirmButtonText: "ตกลง",
-    })
+    });
   };
 
   const openModal = () => {
@@ -226,9 +229,22 @@ const WebcamCapture = ({ onCapture, ModuleName }) => {
                 <WebcamVideo ref={videoRef} autoPlay muted />
                 <WebcamCanvas ref={canvasRef} />
 
-                <ModalButtonTake onClick={() => { captureImage(); closeModal(); }}>ถ่ายรูป</ModalButtonTake>
-                <ModalButtonUpload onClick={() => { handleUploadImage(); closeModal(); }}>อัพโหลดภาพ</ModalButtonUpload>
-                <ModalButtonRed onClick={() => { closeModal(); }}>ปิด</ModalButtonRed>
+                <ModalButtonTake
+                  onClick={() => {
+                    captureImage();
+                    closeModal();
+                  }}
+                >
+                  ถ่ายรูป
+                </ModalButtonTake>
+                {/* <ModalButtonUpload onClick={() => { handleUploadImage(); closeModal(); }}>อัพโหลดภาพ</ModalButtonUpload> */}
+                <ModalButtonRed
+                  onClick={() => {
+                    closeModal();
+                  }}
+                >
+                  ปิด
+                </ModalButtonRed>
               </ModalContent>
             </Modal>
           )}

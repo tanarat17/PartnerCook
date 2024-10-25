@@ -2,8 +2,19 @@ import React, { useState, useEffect } from "react";
 import Container from "@mui/material/Container";
 import Header from "../../components/partner/Header";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Box, Card, CardContent, CardHeader, IconButton, Typography, Button, Grid, TextField, CircularProgress } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  IconButton,
+  Typography,
+  Button,
+  Grid,
+  TextField,
+  CircularProgress,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { motion } from "framer-motion";
 import { getShopById, fetchShopInvoices } from "../../api/strapi/shopApi";
 
@@ -23,51 +34,58 @@ function ShopHomeDetailPreSlip() {
   const [loading, setLoading] = useState(true);
   const [shopData, setShopData] = useState(null);
   const [invoices, setInvoices] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredInvoices, setFilteredInvoices] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-        try {
-            const shop = await getShopById(token, userId);
-            console.log("Full shop data response:", shop);
-  
-            if (shop && shop.shop && shop.shop.id) {
-                const shopId = shop.shop.id;
-                console.log("shopId:", shopId);
-  
-                const invoicesData = await fetchShopInvoices(shopId);
-                console.log("Invoices data received:", invoicesData);
-  
-                if (invoicesData.data.attributes && invoicesData.data.attributes.invoices && Array.isArray(invoicesData.data.attributes.invoices.data)) {
-                    setInvoices(invoicesData.data.attributes.invoices.data);
-                } else {
-                    console.error("No invoices found in the response or invoices is not an array");
-                    setInvoices([]); 
-                }
-  
-            } else {
-                console.error("Shop data structure is incorrect or missing");
-            }
-  
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            setLoading(false);
+      try {
+        const shop = await getShopById(token, userId);
+        console.log("Full shop data response:", shop);
+
+        if (shop && shop.shop && shop.shop.id) {
+          const shopId = shop.shop.id;
+          console.log("shopId:", shopId);
+
+          const invoicesData = await fetchShopInvoices(shopId);
+          console.log("Invoices data received:", invoicesData);
+
+          if (
+            invoicesData.data.attributes &&
+            invoicesData.data.attributes.invoices &&
+            Array.isArray(invoicesData.data.attributes.invoices.data)
+          ) {
+            setInvoices(invoicesData.data.attributes.invoices.data);
+          } else {
+            console.error(
+              "No invoices found in the response or invoices is not an array"
+            );
+            setInvoices([]);
+          }
+        } else {
+          console.error("Shop data structure is incorrect or missing");
         }
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
     };
-  
+
     fetchData();
   }, [userId]);
-  
+
   useEffect(() => {
     if (Array.isArray(invoices)) {
-        const filtered = invoices.filter(invoice =>
-            invoice.attributes.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setFilteredInvoices(filtered);
+      const filtered = invoices.filter((invoice) =>
+        invoice.attributes.invoiceNumber
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
+      );
+      setFilteredInvoices(filtered);
     } else {
-        console.error("Invoices is not an array:", invoices); 
+      console.error("Invoices is not an array:", invoices);
     }
   }, [searchQuery, invoices]);
 
@@ -93,9 +111,9 @@ function ShopHomeDetailPreSlip() {
               fullWidth
               value={searchQuery}
               onChange={handleSearchChange}
-              sx={{ 
+              sx={{
                 mb: 2,
-                backgroundColor: 'white'
+                backgroundColor: "white",
               }}
             />
 
@@ -110,34 +128,56 @@ function ShopHomeDetailPreSlip() {
                             <CloseIcon />
                           </IconButton>
                         }
-                        title={`เลขที่ใบแจ้งหนี้: ${invoice.attributes.invoiceNumber}`} 
+                        title={`เลขที่ใบแจ้งหนี้: ${invoice.attributes.invoiceNumber}`}
                       />
                       <CardContent>
                         {/* แสดงชื่อจาก customer */}
-                        {invoice.attributes.redeem && invoice.attributes.redeem.data && invoice.attributes.redeem.data.attributes.customer.data && (
-                          <Typography variant="body1">
-                            ชื่อ: {invoice.attributes.redeem.data.attributes.customer.data.attributes.username}
-                          </Typography>
-                        )}
+                        {invoice.attributes.redeem &&
+                          invoice.attributes.redeem.data &&
+                          invoice.attributes.redeem.data.attributes.customer
+                            .data && (
+                            <Typography variant="body1">
+                              ชื่อ:{" "}
+                              {
+                                invoice.attributes.redeem.data.attributes
+                                  .customer.data.attributes.username
+                              }
+                            </Typography>
+                          )}
                         {/* ใช้วันที่จาก redeem แทน */}
-                        {invoice.attributes.redeem && invoice.attributes.redeem.data && (
-                          <Typography variant="body1">
-                            วันที่: {new Date(invoice.attributes.redeem.data.attributes.createdAt).toLocaleDateString('th-TH')}
-                          </Typography>
-                        )}
-                        
+                        {invoice.attributes.redeem &&
+                          invoice.attributes.redeem.data && (
+                            <Typography variant="body1">
+                              วันที่:{" "}
+                              {new Date(
+                                invoice.attributes.redeem.data.attributes.createdAt
+                              ).toLocaleDateString("th-TH")}
+                            </Typography>
+                          )}
+
                         {/* เพิ่มส่วนการแสดงรูปภาพ */}
-                        {invoice.attributes.transferImage && invoice.attributes.transferImage.data && (
-                          <Box sx={{ mt: 2 }}>
-                            <img 
-                              src={`${API_URL}${invoice.attributes.transferImage.data.attributes.url}`} 
-                              alt="Transfer Receipt" 
-                              style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }} 
-                            />
-                          </Box>
-                        )}
-                      
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                        {invoice.attributes.transferImage &&
+                          invoice.attributes.transferImage.data && (
+                            <Box sx={{ mt: 2 }}>
+                              <img
+                                src={`${API_URL}${invoice.attributes.transferImage.data.attributes.url}`}
+                                alt="Transfer Receipt"
+                                style={{
+                                  width: "100%",
+                                  maxHeight: "200px",
+                                  objectFit: "contain",
+                                }}
+                              />
+                            </Box>
+                          )}
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            mt: 2,
+                          }}
+                        >
                           <Button variant="contained" color="warning">
                             ดูใบเสร็จ
                           </Button>

@@ -1,10 +1,10 @@
 // C:\Project_OutSouce\Cook_lineOA\src\App.jsx
 
-import React, { useEffect, useState } from 'react';
-import { useLiff } from 'react-liff';
-import { useNavigate } from 'react-router-dom';
-import { loginWithLineId } from './api/business/login';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { useLiff } from "react-liff";
+import { useNavigate } from "react-router-dom";
+import { loginWithLineId } from "./api/business/login";
+import "./App.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337";
 const token = import.meta.env.VITE_TOKEN_TEST;
@@ -14,21 +14,27 @@ const App = () => {
   const navigate = useNavigate();
   const { isLoggedIn, liff, error } = useLiff();
   const [loading, setLoading] = useState(true);
-  const [displayName, setDisplayName] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [displayName, setDisplayName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const initializeLiff = async () => {
       try {
-        if (typeof liff === 'undefined') {
-          console.error("LIFF is undefined. Please check if the SDK is loaded correctly.");
+        if (typeof liff === "undefined") {
+          console.error(
+            "LIFF is undefined. Please check if the SDK is loaded correctly."
+          );
           setErrorMessage("LIFF is not loaded. Please refresh the page.");
           return;
         }
 
-        if (typeof liff.init !== 'function') {
-          console.error("LIFF init method is not a function. Please check your LIFF SDK version.");
-          setErrorMessage("LIFF is not initialized correctly. Please try again.");
+        if (typeof liff.init !== "function") {
+          console.error(
+            "LIFF init method is not a function. Please check your LIFF SDK version."
+          );
+          setErrorMessage(
+            "LIFF is not initialized correctly. Please try again."
+          );
           return;
         }
 
@@ -41,20 +47,20 @@ const App = () => {
           const response = await loginWithLineId(profile.userId);
 
           if (!response) {
-            navigate('/Login');
+            navigate("/Login");
           } else {
             const { jwt, user } = response;
-            localStorage.setItem('accessToken', jwt);
-            localStorage.setItem('user', JSON.stringify(user));
-            console.log('Token and user data saved to localStorage');
-            navigate('/partner/shopHome');
+            localStorage.setItem("accessToken", jwt);
+            localStorage.setItem("user", JSON.stringify(user));
+            console.log("Token and user data saved to localStorage");
+            navigate("/partner/shopHome");
           }
         } else {
           liff.login();
         }
       } catch (err) {
-        console.error('Initialization or login error:', err);
-        setErrorMessage('Initialization or login error. Please try again.');
+        console.error("Initialization or login error:", err);
+        setErrorMessage("Initialization or login error. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -67,17 +73,25 @@ const App = () => {
     if (liff) {
       liff.logout();
     }
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
-    navigate('/'); // Redirect to login page
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    navigate("/"); // Redirect to login page
   };
 
   if (loading) {
-    return <div className="App"><p>Loading...</p></div>;
+    return (
+      <div className="App">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="App"><p>Something went wrong: {error.message}</p></div>;
+    return (
+      <div className="App">
+        <p>Something went wrong: {error.message}</p>
+      </div>
+    );
   }
 
   return (

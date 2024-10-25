@@ -1,7 +1,7 @@
 // src/pages/partner/AddProduct.jsx
 import React, { useState, useEffect } from "react";
 import Header from "../../components/partner/Header";
-import { FaPlus, FaRegSave ,FaEdit } from "react-icons/fa";
+import { FaPlus, FaRegSave, FaEdit } from "react-icons/fa";
 import Container from "@mui/material/Container";
 import Modal from "@mui/material/Modal";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -55,7 +55,6 @@ export default function AddProduct() {
     image: null,
   });
 
-
   const fetchShops = async () => {
     try {
       const shopData = await getShopById(token, userId);
@@ -76,7 +75,7 @@ export default function AddProduct() {
   const fetchProducts = async () => {
     try {
       const fetchedProducts = await getAllProductsByShopId(token, shopId);
-      console.log("Front :: " + fetchedProducts)
+      console.log("Front :: " + fetchedProducts);
       setProducts(fetchedProducts);
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการดึงข้อมูลสินค้า:", error);
@@ -103,13 +102,12 @@ export default function AddProduct() {
         ...prevData,
         image: file,
       }));
-    }
-    else {
+    } else {
       // แจ้งเตือนเมื่อไม่เลือกภาพ
       Swal.fire({
-        icon: 'warning',
-        title: 'กรุณาเลือกภาพ',
-        text: 'กรุณาเพิ่มรูปสินค้าก่อนทำการบันทึก',
+        icon: "warning",
+        title: "กรุณาเลือกภาพ",
+        text: "กรุณาเพิ่มรูปสินค้าก่อนทำการบันทึก",
       });
     }
   };
@@ -121,7 +119,7 @@ export default function AddProduct() {
           icon: "warning",
           title: "กรุณาตรวจสอบข้อมูลอีกครั้ง",
           text: "กรุณาตรวจสอบข้อมูลอีกครั้ง",
-          position: 'center',
+          position: "center",
           showConfirmButton: true,
           confirmButtonText: "ตกลง",
         });
@@ -133,7 +131,7 @@ export default function AddProduct() {
           icon: "warning",
           title: "ค่าติดลบไม่ถูกต้อง",
           text: "จำนวนและมูลค่าต้องเป็นค่าบวก",
-          position: 'center',
+          position: "center",
           showConfirmButton: true,
           confirmButtonText: "ตกลง",
         });
@@ -160,18 +158,27 @@ export default function AddProduct() {
 
       let response;
       if (isEditing) {
-        response = await updateProduct(token, userLineId,editProductId, productData);
-        setProducts((prev) => prev.map((p) => (p.id === editProductId ? response.data.data : p)));
+        response = await updateProduct(
+          token,
+          userLineId,
+          editProductId,
+          productData
+        );
+        setProducts((prev) =>
+          prev.map((p) => (p.id === editProductId ? response.data.data : p))
+        );
       } else {
-        response = await addProduct(token, userLineId ,productData);
+        response = await addProduct(token, userLineId, productData);
         setProducts((prevProducts) => [...prevProducts, response.data.data]);
         handleClose();
       }
 
       Swal.fire({
         icon: "success",
-        title: isEditing ? "สินค้าถูกแก้ไขเรียบร้อยแล้ว" : "สินค้าถูกเพิ่มเรียบร้อยแล้ว",
-        position: 'center',
+        title: isEditing
+          ? "สินค้าถูกแก้ไขเรียบร้อยแล้ว"
+          : "สินค้าถูกเพิ่มเรียบร้อยแล้ว",
+        position: "center",
         showConfirmButton: true,
         confirmButtonText: "ตกลง",
       }).then(() => {
@@ -181,16 +188,15 @@ export default function AddProduct() {
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการเพิ่ม/แก้ไขสินค้า:", error);
       await Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "เกิดข้อผิดพลาดในการเพิ่ม/แก้ไขสินค้า!",
-          position: 'center',
-          showConfirmButton: true,
-          confirmButtonText: "ตกลง",
+        icon: "error",
+        title: "Oops...",
+        text: "เกิดข้อผิดพลาดในการเพิ่ม/แก้ไขสินค้า!",
+        position: "center",
+        showConfirmButton: true,
+        confirmButtonText: "ตกลง",
       });
       handleClose(); // ปิด modal เมื่อมีข้อผิดพลาด
-  }
-  
+    }
   };
 
   const handleEdit = (product) => {
@@ -222,6 +228,17 @@ export default function AddProduct() {
     });
   };
 
+  const handleClear = () => {
+    setForm({
+      name: "",
+      fullName: "",
+      cardID: "",
+      bookBankNumber: "",
+      bank: "",
+      location: "",
+    });
+  };
+
   const theme = createTheme({
     typography: {
       fontFamily: "Sarabun !important",
@@ -235,180 +252,220 @@ export default function AddProduct() {
   return (
     <ThemeProvider theme={theme}>
       <Header />
-    <Container maxWidth="md"> 
-    <Grid container justifyContent="flex-end" style={{ marginTop: '16px' }}>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="success"
-            startIcon={<FaPlus />}
-            onClick={handleOpen}
-          >
-            เพิ่มสินค้า
-          </Button>
-        </Grid>
-      </Grid>
-
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={{ ...style, borderRadius: '8px', boxShadow: 2 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="name"
-                label="ชื่อสินค้า"
-                variant="outlined"
-                value={form.name || ""}
-                onChange={handleChange}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                id="numStock"
-                label="จำนวน"
-                variant="outlined"
-                value={form.numStock || ""}
-                onChange={handleChange}
-                type="number"
-                inputProps={{
-                  min: 1, // ห้ามน้อยกว่า 1
-                }}
-                error={form.numStock < 1 && form.numStock !== ""} 
-                helperText={form.numStock < 1 && form.numStock !== "" ? "จำนวนต้องไม่น้อยกว่า 1" : ""}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                id="type"
-                label="ประเภทสินค้า"
-                variant="outlined"
-                value={form.type || ""}
-                onChange={handleChange}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                id="price"
-                label="มูลค่าต่อชิ้น"
-                variant="outlined"
-                value={form.price || ""}
-                onChange={handleChange}
-                type="number"
-                step="0.01"
-                inputProps={{
-                  min: 1, // ห้ามน้อยกว่า 1
-                }}
-                error={form.price < 1 && form.price !== ""} 
-                helperText={form.price < 1 && form.price !== "" ? "มูลค่าต่อชิ้นต้องไม่น้อยกว่า 1" : ""}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="description"
-                label="รายละเอียดสินค้า"
-                variant="outlined"
-                value={form.description || ""}
-                onChange={handleChange}
-                multiline
-                rows={4}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <WebcamCapture
-                id="image"
-                onCapture={handleCaptureimage}
-                ModuleName="Product"
-              />
-            </Grid>
-
-            <Grid item xs={14} display="flex" justifyContent="flex-end">
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<FaRegSave />}
-                onClick={handleSubmit}
-              >
-                บันทึก
-              </Button>
-            </Grid>
+      <Container maxWidth="md">
+        <Grid container justifyContent="flex-end" style={{ marginTop: "16px" }}>
+          <Grid item>
+            <Button
+              variant="contained"
+              color="success"
+              startIcon={<FaPlus />}
+              onClick={handleOpen}
+            >
+              เพิ่มสินค้า
+            </Button>
           </Grid>
-        </Box>
-      </Modal>
-      {products.map((product) => {
-  if (!product || typeof product.approved === 'undefined') {
-    return null;
-  }
-  return (
-    <div key={product.id} className="relative w-full h-auto bg-white rounded-md inner-shadow p-5 mt-10">
-      <div className="grid grid-cols-3 gap-4">
-        {/* สี่เหลี่ยมสถานะการอนุมัติ */}
-        <div
-          className={`absolute top-2 right-2 px-3 py-1 text-white font-bold rounded-md ${product.approved ? 'bg-green-500' : 'bg-yellow-500'} ml-2`}
-          title={product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
-        >
-          {product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
-        </div>
+        </Grid>
 
-        {/* ปุ่มแก้ไข */}
-        <button
-          className="absolute top-2 right-24 px-3 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-700 flex items-center mr-2"
-          onClick={() => handleEdit(product)}
-          title="แก้ไขสินค้า"
-        >
-          <FaEdit className="mr-1" /> {/* ไอคอน Edit */}
-          แก้ไข
-        </button>
-        <div>
-          {/* ตรวจสอบว่ามี image หรือไม่ */}
-          {product.image?.data?.attributes?.url ? (
-            <img
-              src={`${API_URL}${product.image.data.attributes.url}`}
-              alt={product.name || 'No Name'}
-              className="w-full h-auto cursor-pointer"
-              onClick={() => {     
-                // setModalImage(product.image.data.attributes.url);
-              }}
-            />
-          ) : (
-            <img src={onion} alt="default" className="w-full h-auto" />
-          )}
-        </div>
-        <p className="col-span-2 text-2xl mt-8">{product.name || 'No Name'}</p>
-      </div>
+        <Modal open={open} onClose={handleClose}>
+          <Box sx={{ ...style, borderRadius: "8px", boxShadow: 2 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  id="name"
+                  label="ชื่อสินค้า"
+                  variant="outlined"
+                  value={form.name || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
 
-      {/* ส่วนแสดงข้อมูลสินค้าอื่น ๆ */}
-      <div className="grid grid-cols-4 gap-4 py-5">
-        <p className="col-span-2 text-lg">จำนวนสินค้าในสต็อก</p>
-        <p className="text-center text-lg">{product.numStock ?? 0}</p>
-        <p className="text-right text-lg">ชิ้น</p>
-      </div>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  id="numStock"
+                  label="จำนวน"
+                  variant="outlined"
+                  value={form.numStock || ""}
+                  onChange={handleChange}
+                  type="number"
+                  inputProps={{
+                    min: 1, // ห้ามน้อยกว่า 1
+                  }}
+                  error={form.numStock < 1 && form.numStock !== ""}
+                  helperText={
+                    form.numStock < 1 && form.numStock !== ""
+                      ? "จำนวนต้องไม่น้อยกว่า 1"
+                      : ""
+                  }
+                />
+              </Grid>
 
-      <div className="grid grid-cols-4 gap-4 py-5">
-        <p className="col-span-2 text-lg">ราคาต่อชิ้น</p>
-        <p className="text-center text-lg">{product.price ?? 0}</p>
-        <p className="text-right text-lg">บาท</p>
-      </div>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  id="type"
+                  label="ประเภทสินค้า"
+                  variant="outlined"
+                  value={form.type || ""}
+                  onChange={handleChange}
+                />
+              </Grid>
 
-      <div className="grid grid-cols-4 gap-4 py-5">
-        <p className="col-span-2 text-lg">จำนวนเงินทั้งหมด</p>
-        <p className="text-right text-lg">บาท</p>
-        <p className="text-center text-lg">{product.price * product.numStock}</p>
-      </div>
-    </div>
-  );
-})}
-<footer className=" text-white py-5 mt-10">
-</footer>
-    </Container>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  id="price"
+                  label="มูลค่าต่อชิ้น"
+                  variant="outlined"
+                  value={form.price || ""}
+                  onChange={handleChange}
+                  type="number"
+                  step="0.01"
+                  inputProps={{
+                    min: 1, // ห้ามน้อยกว่า 1
+                  }}
+                  error={form.price < 1 && form.price !== ""}
+                  helperText={
+                    form.price < 1 && form.price !== ""
+                      ? "มูลค่าต่อชิ้นต้องไม่น้อยกว่า 1"
+                      : ""
+                  }
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  id="description"
+                  label="รายละเอียดสินค้า"
+                  variant="outlined"
+                  value={form.description || ""}
+                  onChange={handleChange}
+                  multiline
+                  rows={4}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <WebcamCapture
+                  id="image"
+                  onCapture={handleCaptureimage}
+                  ModuleName="Product"
+                />
+              </Grid>
+
+              <Grid item xs={14} display="flex" justifyContent="flex-end">
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#FBB615", // ใช้สีที่ต้องการ
+                    "&:hover": {
+                      backgroundColor: "#f9a623", // เปลี่ยนสีเมื่อ hover
+                    },
+                  }}
+                  startIcon={<FaRegSave />}
+                  onClick={handleSubmit}
+                >
+                  เพิ่มสินค้า
+                </Button>
+
+                <Button
+                  variant="outlined" // เปลี่ยนเป็นปุ่ม outline สำหรับความแตกต่าง
+                  sx={{
+                    marginLeft: "10px", // เพิ่มระยะห่างระหว่างปุ่ม
+                    color: "#FBB615", // เปลี่ยนสีข้อความ
+                    borderColor: "#FBB615", // เปลี่ยนสีกรอบ
+                    "&:hover": {
+                      borderColor: "#f9a623", // เปลี่ยนสีกรอบเมื่อ hover
+                      color: "#f9a623", // เปลี่ยนสีข้อความเมื่อ hover
+                    },
+                  }}
+                  onClick={() => {
+                    // ฟังก์ชันสำหรับล้างข้อมูล
+                    handleClear();
+                  }}
+                >
+                  ล้าง
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
+        </Modal>
+        {products.map((product) => {
+          if (!product || typeof product.approved === "undefined") {
+            return null;
+          }
+          return (
+            <div
+              key={product.id}
+              className="relative w-full h-auto bg-white rounded-md inner-shadow p-5 mt-10"
+            >
+              <div className="grid grid-cols-3 gap-4">
+                {/* สี่เหลี่ยมสถานะการอนุมัติ */}
+                <div
+                  className={`absolute top-2 right-2 px-3 py-1 text-white font-bold rounded-md ${
+                    product.approved ? "bg-green-500" : "bg-yellow-500"
+                  } ml-2`}
+                  title={product.approved ? "อนุมัติแล้ว" : "รออนุมัติ"}
+                >
+                  {product.approved ? "อนุมัติแล้ว" : "รออนุมัติ"}
+                </div>
+
+                {/* ปุ่มแก้ไข */}
+                <button
+                  className="absolute top-2 right-24 px-3 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-700 flex items-center mr-2"
+                  onClick={() => handleEdit(product)}
+                  title="แก้ไขสินค้า"
+                >
+                  <FaEdit className="mr-1" /> {/* ไอคอน Edit */}
+                  แก้ไข
+                </button>
+                <div>
+                  {/* ตรวจสอบว่ามี image หรือไม่ */}
+                  {product.image?.data?.attributes?.url ? (
+                    <img
+                      src={`${API_URL}${product.image.data.attributes.url}`}
+                      alt={product.name || "No Name"}
+                      className="w-full h-auto cursor-pointer"
+                      onClick={() => {
+                        // setModalImage(product.image.data.attributes.url);
+                      }}
+                    />
+                  ) : (
+                    <img src={onion} alt="default" className="w-full h-auto" />
+                  )}
+                </div>
+                <p className="col-span-2 text-2xl mt-8">
+                  {product.name || "No Name"}
+                </p>
+              </div>
+
+              {/* ส่วนแสดงข้อมูลสินค้าอื่น ๆ */}
+              <div className="grid grid-cols-4 gap-4 py-5">
+                <p className="col-span-2 text-lg">จำนวนสินค้าในสต็อก</p>
+                <p className="text-center text-lg">{product.numStock ?? 0}</p>
+                <p className="text-right text-lg">ชิ้น</p>
+              </div>
+
+              <div className="grid grid-cols-4 gap-4 py-5">
+                <p className="col-span-2 text-lg">ราคาต่อชิ้น</p>
+                <p className="text-center text-lg">{product.price ?? 0}</p>
+                <p className="text-right text-lg">บาท</p>
+              </div>
+
+              <div className="grid grid-cols-4 gap-4 py-5">
+                <p className="col-span-2 text-lg">จำนวนเงินทั้งหมด</p>
+                <p className="text-right text-lg">บาท</p>
+                <p className="text-center text-lg">
+                  {product.price * product.numStock}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+        <footer className=" text-white py-5 mt-10"></footer>
+      </Container>
     </ThemeProvider>
   );
 }

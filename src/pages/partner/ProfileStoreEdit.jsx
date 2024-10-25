@@ -1,17 +1,24 @@
 import Header from "../../components/partner/Header";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { TextField, FormControl, InputLabel, Select, MenuItem, Checkbox, Button } from '@mui/material';
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  Button,
+} from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import WebcamCapture from "../../components/WebcamCapture";
 import WebcamCapture2 from "../../components/WebcamCapture2";
-import { createShop,getBank ,getShopById } from "../../api/strapi/shopApi";
+import { createShop, getBank, getShopById } from "../../api/strapi/shopApi";
 import { uploadImage } from "../../api/strapi/uploadApi";
 import { useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 function ProfileStoreEdit() {
-
   const BANK_OPTIONS = {
     3: "Bangkok Bank Public Company Limited",
     4: "Krungthai Bank Public Company Limited",
@@ -26,28 +33,27 @@ function ProfileStoreEdit() {
     13: "Land and Houses Bank Public Company Limited",
     14: "Standard Chartered Bank - Thai - Public Company Limited",
     15: "Industrial and Commercial Bank of China - Thai - Public Company Limited - ICBC",
-    16: "Bank of China - Thai - Public Company Limited"
+    16: "Bank of China - Thai - Public Company Limited",
   };
-
 
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [banks, setBanks] = useState([]); // สำหรับเก็บข้อมูลธนาคาร
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
-    
-    name: '',
-    fullName: '',
-    cardID: '',
-    bookBankNumber: '',
-    bank: '',
-    location: '',
-    checkedOne: false
+    name: "",
+    fullName: "",
+    cardID: "",
+    bookBankNumber: "",
+    bank: "",
+    location: "",
+    checkedOne: false,
   });
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const token = localStorage.getItem('accessToken') || import.meta.env.VITE_TOKEN_TEST;
-  const users = JSON.parse(localStorage.getItem('user') || '{}');
+  const token =
+    localStorage.getItem("accessToken") || import.meta.env.VITE_TOKEN_TEST;
+  const users = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = users.id;
 
   const navigate = useNavigate();
@@ -58,27 +64,27 @@ function ProfileStoreEdit() {
         setLoading(true);
         const shopData = await getShopById(token, userId); // เรียก API
 
-        console.log('Fetched shop data:', shopData); // แสดงข้อมูลที่ได้รับจาก API
+        console.log("Fetched shop data:", shopData); // แสดงข้อมูลที่ได้รับจาก API
 
-        if (shopData && typeof shopData === 'object') {
+        if (shopData && typeof shopData === "object") {
           setShops([shopData]); // ตั้งค่า shops ด้วยข้อมูลที่ได้รับ
           // อัปเดตค่าฟอร์มด้วยข้อมูลที่ได้รับ
 
-          console.log(" FRONT SHOP DATA"+shopData);
+          console.log(" FRONT SHOP DATA" + shopData);
           setFormData({
-            name: shopData.shop.name || '',
-            fullName: shopData.fullName || '',
-            cardID: shopData.cardID || '',
-            bookBankNumber: shopData.shop.bookBankNumber || '',
-            bank: BANK_OPTIONS[shopData.shop.bank.id] || '', 
-            location: shopData.shop.location || '',
-            image: shopData.shop.image || '',
-            bookBankImage: shopData.shop.bookBankImage || '',
+            name: shopData.shop.name || "",
+            fullName: shopData.fullName || "",
+            cardID: shopData.cardID || "",
+            bookBankNumber: shopData.shop.bookBankNumber || "",
+            bank: BANK_OPTIONS[shopData.shop.bank.id] || "",
+            location: shopData.shop.location || "",
+            image: shopData.shop.image || "",
+            bookBankImage: shopData.shop.bookBankImage || "",
 
-            checkedOne: false // กำหนดค่าตั้งต้นของ checkbox
+            checkedOne: true, // กำหนดค่าตั้งต้นของ checkbox
           });
         } else {
-          navigate('/ProfileStore');
+          navigate("/ProfileStore");
           setShops([]); // หาก shopData ไม่ถูกต้อง ให้ตั้งค่าเป็นอาเรย์ว่าง
         }
       } catch (error) {
@@ -95,7 +101,7 @@ function ProfileStoreEdit() {
     const { id, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [id]: value
+      [id]: value,
     }));
   };
 
@@ -103,7 +109,7 @@ function ProfileStoreEdit() {
     const { id, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [id]: value
+      [id]: value,
     }));
   };
 
@@ -111,7 +117,7 @@ function ProfileStoreEdit() {
     const { checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      checkedOne: checked
+      checkedOne: checked,
     }));
   };
 
@@ -124,7 +130,6 @@ function ProfileStoreEdit() {
     }
   };
 
-
   const handleCaptureBookBankImage = (imageFile) => {
     if (imageFile) {
       setFormData((prevData) => ({
@@ -134,11 +139,10 @@ function ProfileStoreEdit() {
     }
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     // ที่นี่จะมีฟังก์ชันในการบันทึกข้อมูล
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -195,7 +199,7 @@ function ProfileStoreEdit() {
                 onChange={handleInputChange}
               />
             </div>
-            
+
             {/* <div className="w-full md:w-1/2 px-2 mt-4">
               <FormControl fullWidth>
                 <InputLabel id="bank-select-label">ธนาคาร</InputLabel>
@@ -221,79 +225,83 @@ function ProfileStoreEdit() {
             </div>  */}
 
             <div className="w-full md:w-1/2 px-2 mt-4">
-            <FormControl fullWidth>
-              <InputLabel id="bank-select-label">ธนาคาร</InputLabel>
-              <Select
-                className="bg-white"
-                labelId="bank-select-label"
-                id="bank"
-                value={formData.bank} // Display the bank name here
-                label="ธนาคาร"
-                onChange={handleSelectChange}
-              >
-                {/* Loop through BANK_OPTIONS to generate MenuItems */}
-                {Object.entries(BANK_OPTIONS).map(([id, name]) => (
-                  <MenuItem key={id} value={name}>
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
-            
+              <FormControl fullWidth>
+                <InputLabel id="bank-select-label">ธนาคาร</InputLabel>
+                <Select
+                  className="bg-white"
+                  labelId="bank-select-label"
+                  id="bank"
+                  value={formData.bank} // Display the bank name here
+                  label="ธนาคาร"
+                  onChange={handleSelectChange}
+                >
+                  {/* Loop through BANK_OPTIONS to generate MenuItems */}
+                  {Object.entries(BANK_OPTIONS).map(([id, name]) => (
+                    <MenuItem key={id} value={name}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
 
             <div className="w-full px-2 mt-4">
               <div>
                 <label>ถ่ายรูปตนเองพร้อมถือบัตรประจำตัวประชาชน</label>
               </div>
               <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
-              <WebcamCapture 
-                className="bg-white" 
-                id="image" 
-                onCapture={handleCaptureimage} 
-                ModuleName="IDCard"
-              />
+                <WebcamCapture
+                  className="bg-white"
+                  id="image"
+                  onCapture={handleCaptureimage}
+                  ModuleName="IDCard"
+                />
                 <div className="w-full px-2 mt-4">
-                {formData.image && (
-                  <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
-                    <img 
-                      src={`${API_URL}${formData.image.url}`}
-                      alt="IDCardIMG" 
-                      style={{ width: '100%', maxWidth: '400px', height: 'auto' }} 
-                    />
-                  </div>
-                )}
+                  {formData.image && (
+                    <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
+                      <img
+                        src={`${API_URL}${formData.image.url}`}
+                        alt="IDCardIMG"
+                        style={{
+                          width: "100%",
+                          maxWidth: "400px",
+                          height: "auto",
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-
 
             <div className="w-full px-2 mt-4">
               <div>
-              <label>ถ่ายหน้าบุ๊คแบงก์</label>
+                <label>ถ่ายหน้าบุ๊คแบงก์</label>
               </div>
               <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
-              <WebcamCapture 
-                className="bg-white" 
-                id="bookBankImage" 
-                onCapture={handleCaptureBookBankImage} 
-                ModuleName="BookBank"
-              />
+                <WebcamCapture
+                  className="bg-white"
+                  id="bookBankImage"
+                  onCapture={handleCaptureBookBankImage}
+                  ModuleName="BookBank"
+                />
                 <div className="w-full px-2 mt-4">
-                {formData.bookBankImage && (
-                  <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
-                    <img 
-                      src={`${API_URL}${formData.bookBankImage.url}`}
-                      alt="BookBankIMG" 
-                      style={{ width: '100%', maxWidth: '400px', height: 'auto' }} 
-                    />
-                  </div>
-                )}
+                  {formData.bookBankImage && (
+                    <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
+                      <img
+                        src={`${API_URL}${formData.bookBankImage.url}`}
+                        alt="BookBankIMG"
+                        style={{
+                          width: "100%",
+                          maxWidth: "400px",
+                          height: "auto",
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-
-
 
             <div className="w-full px-2 mt-4">
               <TextField
@@ -322,16 +330,28 @@ function ProfileStoreEdit() {
             sx={{ "& .MuiSvgIcon-root": { fontSize: 30 } }}
           />
           <span>
-            <strong>ยอมรับเงื่อนไข</strong>{" "}
+            <strong style={{ color: "red" }}>ยอมรับเงื่อนไข </strong>
+            {
+              "การเปิดเผยข้อมูลอย่างชัดเจนในกรณีที่ผู้ใช้อาจไม่คาดคิดว่าจำเป็นต้องใช้ข้อมูลส่วนบุคคลและข้อมูลที่ละเอียดอ่อนของตนสำหรับฟีเจอร์หรือฟังก์ชันการทำงานภายในแอปที่เป็นไปตามข้อกำหนดของนโยบาย"
+            }
           </span>
         </div>
-       
+
         <div className="container mx-auto px-4">
           <button
             type="submit"
-            className={`w-full h-12 mb-10 flex justify-center rounded-xl items-center text-white ${formData.name && formData.fullName && formData.cardID && formData.bookBankNumber && formData.bank && formData.location ? "bg-green-500" : "bg-slate-300"}`}
+            className={`w-full h-12 mb-10 flex justify-center rounded-xl items-center text-white ${
+              formData.name &&
+              formData.fullName &&
+              formData.cardID &&
+              formData.bookBankNumber &&
+              formData.bank &&
+              formData.location
+                ? "bg-[#FBB615]"
+                : "bg-slate-300"
+            }`}
           >
-            บันทึกข้อมูล
+            แก้ไขข้อมูล
           </button>
         </div>
       </form>

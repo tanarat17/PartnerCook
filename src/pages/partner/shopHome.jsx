@@ -8,8 +8,9 @@ function PartnerHome() {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
 
-  const token = localStorage.getItem('accessToken') || import.meta.env.VITE_TOKEN_TEST;
-  const users = JSON.parse(localStorage.getItem('user') || '{}');
+  const token =
+    localStorage.getItem("accessToken") || import.meta.env.VITE_TOKEN_TEST;
+  const users = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = users.id;
 
   useEffect(() => {
@@ -18,16 +19,16 @@ function PartnerHome() {
         setIsLoading(true);
         const shopData = await getShopById(token, userId);
 
-        console.log('Fetched shop data:', shopData);
+        console.log("Fetched shop data:", shopData);
 
-        if (shopData && typeof shopData === 'object' && shopData.shop) {
+        if (shopData && typeof shopData === "object" && shopData.shop) {
           setShopData([shopData.shop]);
         } else {
           // กรณีไม่พบข้อมูลร้านค้า ให้เปลี่ยนไปหน้า ProfileStore
           // navigate('/PDPA');
         }
       } catch (error) {
-        setFetchError('Error: Shop data is undefined or missing.');
+        setFetchError("Error: Shop data is undefined or missing.");
         // navigate('/PDPA');
       } finally {
         setIsLoading(false);
@@ -56,7 +57,7 @@ function PartnerHome() {
                     style={{
                       backgroundImage: shop.image?.data?.attributes?.url
                         ? `url(${shop.image.data.attributes.url})`
-                        : 'url(https://cdn.britannica.com/70/234870-050-D4D024BB/Orange-colored-cat-yawns-displaying-teeth.jpg)',
+                        : "url(https://cdn.britannica.com/70/234870-050-D4D024BB/Orange-colored-cat-yawns-displaying-teeth.jpg)",
                       backgroundSize: "cover",
                     }}
                   ></span>

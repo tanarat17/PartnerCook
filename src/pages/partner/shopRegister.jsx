@@ -1,4 +1,3 @@
-
 // src\pages\partner\shopRegister.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -72,12 +71,12 @@ function shopRegister() {
 
     setIsFormValid(
       username &&
-      fullName &&
-      telNumber &&
-      gender &&
-      address &&
-      cardID &&
-      checkedOne
+        fullName &&
+        telNumber &&
+        gender &&
+        address &&
+        cardID &&
+        checkedOne
     );
   }, [formData]);
 
@@ -132,10 +131,10 @@ function shopRegister() {
     if (response) {
       // Assuming that the API response contains an "id" field if registration was successful
       alert("Shop registered successfully!");
-      
+
       navigate("/shopHome"); // Redirect to home after successful registration
     } else {
-      throw new Error('User registration failed.');
+      throw new Error("User registration failed.");
     }
   };
 

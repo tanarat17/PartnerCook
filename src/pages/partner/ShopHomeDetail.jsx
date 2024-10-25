@@ -1,11 +1,18 @@
 // src\pages\partner\ShopHomeDetail.jsx
 import Header from "../../components/partner/Header";
 import { useState } from "react";
-import { Box, Card, CardContent, CardHeader, IconButton, Typography } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import QrScanner from 'react-qr-scanner'; // นำเข้า QrScanner จาก react-qr-scanner
+import QrScanner from "react-qr-scanner"; // นำเข้า QrScanner จาก react-qr-scanner
 
 function ShopHomeDetail() {
   const theme = createTheme({
@@ -14,36 +21,35 @@ function ShopHomeDetail() {
     },
   });
 
-  const navigate = useNavigate(); 
-  const [result, setResult] = useState('No result');
+  const navigate = useNavigate();
+  const [result, setResult] = useState("No result");
   const [isScanning, setIsScanning] = useState(false);
-
 
   const handleScan = (data) => {
     if (data) {
       setIsScanning(false);
-  
+
       console.log("QR Code data:", data);
-  
+
       try {
         // เข้าถึงเฉพาะค่า `text` จาก data
         let formattedData = data.text;
-  
+
         // ทำการ clean escape characters
         if (typeof formattedData === "string") {
           // ทำการลบ escape characters และทำความสะอาดข้อมูล
           formattedData = formattedData
-            .replace(/\\"/g, '"')       // แทนที่ \\" ด้วย "
-            .replace(/^"|"$/g, '')      // ลบ " ที่อยู่ข้างหน้าและข้างหลังของข้อมูล
-            .replace(/\\+/g, '');       // ลบ \ ทั้งหมด
-        
+            .replace(/\\"/g, '"') // แทนที่ \\" ด้วย "
+            .replace(/^"|"$/g, "") // ลบ " ที่อยู่ข้างหน้าและข้างหลังของข้อมูล
+            .replace(/\\+/g, ""); // ลบ \ ทั้งหมด
+
           console.log("Formatted Data after cleaning:", formattedData);
-          
+
           // ส่งข้อมูลแบบ string โดยไม่แปลงเป็น JSON
-          navigate('/partner/ShopHomeDetailResive', { state: { rawData: formattedData } });
-        }
-        
-         else {
+          navigate("/partner/ShopHomeDetailResive", {
+            state: { rawData: formattedData },
+          });
+        } else {
           setResult("QR Code ไม่ใช่ JSON format");
         }
       } catch (error) {
@@ -52,7 +58,7 @@ function ShopHomeDetail() {
       }
     }
   };
-  
+
   const handleError = (err) => {
     console.error(err);
   };
@@ -70,23 +76,28 @@ function ShopHomeDetail() {
     <ThemeProvider theme={theme}>
       <>
         <Header />
-        <Box 
-          display="flex" 
-          justifyContent="center" 
-          alignItems="center" 
-          sx={{ padding: '5px', marginTop: '10px', marginBottom: '10px', height: '100vh' }} 
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          sx={{
+            padding: "5px",
+            marginTop: "10px",
+            marginBottom: "10px",
+            height: "100vh",
+          }}
         >
-          <Card 
-            sx={{ 
-              width: { xs: '90%', sm: '80%', md: '70%', lg: '60%' },
-              maxWidth: '550px', 
-              position: 'relative' 
+          <Card
+            sx={{
+              width: { xs: "90%", sm: "80%", md: "70%", lg: "60%" },
+              maxWidth: "550px",
+              position: "relative",
             }}
           >
-            <CardHeader 
-              sx={{ backgroundColor: '#800020', color: 'white' }}
+            <CardHeader
+              sx={{ backgroundColor: "#800020", color: "white" }}
               action={
-                <IconButton onClick={handleClose} sx={{ color: 'white' }}>
+                <IconButton onClick={handleClose} sx={{ color: "white" }}>
                   <CloseIcon />
                 </IconButton>
               }
@@ -98,30 +109,37 @@ function ShopHomeDetail() {
                 onScan={handleScan}
                 style={previewStyle}
               />
-              
+
               {isScanning && (
-                <div style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  backgroundColor: 'rgba(128, 0, 32, 0.8)', 
-                  color: 'white',
-                  padding: '15px',
-                  borderRadius: '8px',
-                  textAlign: 'center',
-                  zIndex: 1,
-                }}>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    backgroundColor: "rgba(128, 0, 32, 0.8)",
+                    color: "white",
+                    padding: "15px",
+                    borderRadius: "8px",
+                    textAlign: "center",
+                    zIndex: 1,
+                  }}
+                >
                   <Typography variant="h6">กำลัง Scan QR Code...</Typography>
-                  <Typography variant="body2">กรุณาอยู่ในพื้นที่ที่มีแสงสว่าง</Typography>
+                  <Typography variant="body2">
+                    กรุณาอยู่ในพื้นที่ที่มีแสงสว่าง
+                  </Typography>
                 </div>
               )}
 
-              <div className="qr-result" style={{ marginTop: '10px' }}>
-                <Typography variant="body1" sx={{ fontSize: '1.5rem', lineHeight: 1.5 }}>
+              <div className="qr-result" style={{ marginTop: "10px" }}>
+                <Typography
+                  variant="body1"
+                  sx={{ fontSize: "1.5rem", lineHeight: 1.5 }}
+                >
                   {result}
                 </Typography>
-              </div>         
+              </div>
             </CardContent>
           </Card>
         </Box>

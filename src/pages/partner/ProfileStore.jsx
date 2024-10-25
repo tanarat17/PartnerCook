@@ -3,13 +3,24 @@
 import Header from "../../components/partner/Header";
 import { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { TextField, FormControl, InputLabel, MenuItem, Select, Checkbox } from "@mui/material";
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Checkbox,
+} from "@mui/material";
 import WebcamCapture from "../../components/WebcamCapture";
 import WebcamCapture2 from "../../components/WebcamCapture2";
-import { createShop,getBank,updateUserFromShop } from "../../api/strapi/shopApi";
+import {
+  createShop,
+  getBank,
+  updateUserFromShop,
+} from "../../api/strapi/shopApi";
 import { uploadImage } from "../../api/strapi/uploadApi";
 import { useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 export default function ProfileStore() {
   const theme = createTheme({
@@ -27,22 +38,20 @@ export default function ProfileStore() {
     bank: "",
     image: "",
     bookBankImage: "",
-    checkedOne: false
+    checkedOne: false,
   });
 
   const [isFormValid, setIsFormValid] = useState(false);
   const navigate = useNavigate();
-  const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:1337'; // เปลี่ยนเป็น port ที่ถูกต้อง
-  const token = localStorage.getItem('accessToken');
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337"; // เปลี่ยนเป็น port ที่ถูกต้อง
+  const token = localStorage.getItem("accessToken");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = user.id; // ดึง user ID จากข้อมูลผู้ใช้ที่เก็บไว้
   const displayName = user.fullName; // ดึง displayName จากข้อมูลผู้ใช้ที่เก็บไว้
   const [banks, setBanks] = useState([]); // สำหรับเก็บข้อมูลธนาคาร
   const [loading, setLoading] = useState(true);
 
-
-
-  console.log("Front : ",user);
+  console.log("Front : ", user);
   const handleInputChange = (e) => {
     const { id, name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -60,26 +69,24 @@ export default function ProfileStore() {
     }
   };
 
-useEffect(() => {
-  const fetchBanks = async () => {
-    try {
-      const response = await getBank(token);
-      setBanks(response); 
-    } catch (error) {
-      console.error('Error fetching banks:', error);
-    } finally {
-      setLoading(false); 
-    }
-  };
+  useEffect(() => {
+    const fetchBanks = async () => {
+      try {
+        const response = await getBank(token);
+        setBanks(response);
+      } catch (error) {
+        console.error("Error fetching banks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchBanks();
-}, []);
+    fetchBanks();
+  }, []);
 
-useEffect(() => {
-}, [banks]);
+  useEffect(() => {}, [banks]);
 
-
-console.log("Bank",banks)
+  console.log("Bank", banks);
   const handleCaptureBookBankImage = (imageFile) => {
     if (imageFile) {
       setFormData((prevData) => ({
@@ -107,22 +114,21 @@ console.log("Bank",banks)
       bank,
       image,
       bookBankImage,
-      checkedOne
+      checkedOne,
     } = formData;
 
     setIsFormValid(
       name &&
-      fullName &&
-      location &&
-      cardID &&
-      bookBankNumber &&
-      bank &&
-      image &&
-      bookBankImage &&
-      checkedOne
+        fullName &&
+        location &&
+        cardID &&
+        bookBankNumber &&
+        bank &&
+        image &&
+        bookBankImage &&
+        checkedOne
     );
   }, [formData]);
-  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -130,79 +136,77 @@ console.log("Bank",banks)
     let uploadedBookBankImageObject = null;
 
     try {
-        // ตรวจสอบและอัปโหลดรูปภาพ (ถ้ามี)
-        if (formData.image) {
-            const uploadResponse = await uploadImage(formData.image);
-            uploadedImageObject = uploadResponse.id; // ใช้ id ของรูปภาพที่อัปโหลดสำเร็จ
-        }
-
-        if (formData.bookBankImage) {
-            const uploadResponse = await uploadImage(formData.bookBankImage);
-            uploadedBookBankImageObject = uploadResponse.id;
-        }
-
-        // เตรียมข้อมูลผู้ใช้สำหรับการอัปเดต
-        const userData = {
-            fullName: formData.fullName,
-            cardID: formData.cardID,
-            address: formData.location,
-        };
-
-        // อัปเดตข้อมูลผู้ใช้
-        console.log("Sending user data:", userData);
-        const responseUser = await updateUserFromShop(token, userId, userData);
-        console.log("Response from updateUserFromShop:", responseUser);
-        if (!responseUser || responseUser.error) {
-          console.error("Error updating user:", responseUser);
+      // ตรวจสอบและอัปโหลดรูปภาพ (ถ้ามี)
+      if (formData.image) {
+        const uploadResponse = await uploadImage(formData.image);
+        uploadedImageObject = uploadResponse.id; // ใช้ id ของรูปภาพที่อัปโหลดสำเร็จ
       }
 
-        // เตรียมข้อมูลร้านค้า
-        const shopData = {
-            name: formData.name,
-            location: formData.location,
-            latitude: formData.latitude, // เพิ่มฟิลด์ latitude
-            longitude: formData.longitude, // เพิ่มฟิลด์ longitude
-            image: uploadedImageObject,
-            bookBankNumber: formData.bookBankNumber,
-            bookBankImage: uploadedBookBankImageObject,
-            bank: formData.bank,
-            user: userId,  // เชื่อมโยงกับ User
-            // products: formData.products, // ถ้ามีการส่ง product IDs มาให้
-            checkedOne: formData.checkedOne,
-        };
+      if (formData.bookBankImage) {
+        const uploadResponse = await uploadImage(formData.bookBankImage);
+        uploadedBookBankImageObject = uploadResponse.id;
+      }
 
-        // สร้างร้านค้าใหม่
-        const response = await createShop(token, shopData);
+      // เตรียมข้อมูลผู้ใช้สำหรับการอัปเดต
+      const userData = {
+        fullName: formData.fullName,
+        cardID: formData.cardID,
+        address: formData.location,
+      };
 
-        if (response) {
-            // แสดงผลสำเร็จ
-            Swal.fire({
-                position: "center",
-                icon: "success",
-                title: "ลงทะเบียนร้านค้าเรียบร้อย",
-                showConfirmButton: true,
-                confirmButtonText: "ตกลง"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    navigate("/shopHome");
-                }
-            });
-        } else {
-            throw new Error('Shop registration failed.');
-        }
+      // อัปเดตข้อมูลผู้ใช้
+      console.log("Sending user data:", userData);
+      const responseUser = await updateUserFromShop(token, userId, userData);
+      console.log("Response from updateUserFromShop:", responseUser);
+      if (!responseUser || responseUser.error) {
+        console.error("Error updating user:", responseUser);
+      }
 
-    } catch (error) {
-        console.error("Error during submission:", error);
+      // เตรียมข้อมูลร้านค้า
+      const shopData = {
+        name: formData.name,
+        location: formData.location,
+        latitude: formData.latitude, // เพิ่มฟิลด์ latitude
+        longitude: formData.longitude, // เพิ่มฟิลด์ longitude
+        image: uploadedImageObject,
+        bookBankNumber: formData.bookBankNumber,
+        bookBankImage: uploadedBookBankImageObject,
+        bank: formData.bank,
+        user: userId, // เชื่อมโยงกับ User
+        // products: formData.products, // ถ้ามีการส่ง product IDs มาให้
+        checkedOne: formData.checkedOne,
+      };
+
+      // สร้างร้านค้าใหม่
+      const response = await createShop(token, shopData);
+
+      if (response) {
+        // แสดงผลสำเร็จ
         Swal.fire({
-            icon: "error",
-            title: "พบข้อผิดพลาดระหว่างลงทะเบียน",
-            position: 'center',
-            text: error.message || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง", // ปรับให้แสดงข้อความของ error ที่เกิดขึ้น
-            confirmButtonText: "ตกลง"
+          position: "center",
+          icon: "success",
+          title: "ลงทะเบียนร้านค้าเรียบร้อย",
+          showConfirmButton: true,
+          confirmButtonText: "ตกลง",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate("/shopHome");
+          }
         });
+      } else {
+        throw new Error("Shop registration failed.");
+      }
+    } catch (error) {
+      console.error("Error during submission:", error);
+      Swal.fire({
+        icon: "error",
+        title: "พบข้อผิดพลาดระหว่างลงทะเบียน",
+        position: "center",
+        text: error.message || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง", // ปรับให้แสดงข้อความของ error ที่เกิดขึ้น
+        confirmButtonText: "ตกลง",
+      });
     }
-};
-
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -234,75 +238,56 @@ console.log("Bank",banks)
               />
             </div>
             <div className="w-full md:w-1/2 px-2 mt-4">
-            <TextField
-              id="cardID"
-              label="หมายเลขบัตรประจำตัวประชาชน"
-              variant="outlined"
-              className="w-full bg-white"
-              required
-              value={formData.cardID}
-              onChange={handleInputChange}
-              inputProps={{
-                maxLength: 13, // จำกัดจำนวนหลักให้ไม่เกิน 13
-                pattern: "[0-9]*", // อนุญาตเฉพาะตัวเลข
-                inputMode: "numeric", // แสดงคีย์บอร์ดตัวเลขบนอุปกรณ์มือถือ
-              }}
-              error={formData.cardID.length !== 13} // แสดง error หากไม่ใช่ 13 หลัก
-              helperText={
-                formData.cardID.length !== 13 ? "หมายเลขบัตรประจำตัวต้องมี 13 หลัก" : ""
-              }
-            />
-
+              <TextField
+                id="cardID"
+                label="หมายเลขบัตรประจำตัวประชาชน"
+                variant="outlined"
+                className="w-full bg-white"
+                required
+                value={formData.cardID}
+                onChange={handleInputChange}
+                inputProps={{
+                  maxLength: 13, // จำกัดจำนวนหลักให้ไม่เกิน 13
+                  pattern: "[0-9]*", // อนุญาตเฉพาะตัวเลข
+                  inputMode: "numeric", // แสดงคีย์บอร์ดตัวเลขบนอุปกรณ์มือถือ
+                }}
+                error={formData.cardID.length !== 13} // แสดง error หากไม่ใช่ 13 หลัก
+                helperText={
+                  formData.cardID.length !== 13
+                    ? "หมายเลขบัตรประจำตัวต้องมี 13 หลัก"
+                    : ""
+                }
+              />
             </div>
             <div className="w-full md:w-1/2 px-2 mt-4">
-            <TextField
-              id="bookBankNumber"
-              label="หมายเลขบัญชีธนาคาร"
-              variant="outlined"
-              className="w-full bg-white"
-              required
-              value={formData.bookBankNumber}
-              onChange={handleInputChange}
-              inputProps={{
-                maxLength: 15, // จำกัดให้กรอกไม่เกิน 15 หลัก
-                pattern: "[0-9]*", // อนุญาตให้กรอกเฉพาะตัวเลข
-                inputMode: "numeric", // แสดงคีย์บอร์ดตัวเลขบนมือถือ
-              }}
-              error={formData.bookBankNumber.length > 15 || formData.bookBankNumber.length < 10} // แสดง error หากจำนวนหลักเกิน 15 หรือน้อยกว่า 10
-              helperText={
-                formData.bookBankNumber.length > 15
-                  ? "หมายเลขบัญชีธนาคารต้องไม่เกิน 15 หลัก"
-                  : formData.bookBankNumber.length < 10
-                  ? "หมายเลขบัญชีธนาคารต้องมีอย่างน้อย 10 หลัก"
-                  : ""
-              }
-          />
-          </div>
-            {/* <div className="w-full md:w-1/2 px-2 mt-4">
-              <FormControl fullWidth>
-                <InputLabel id="bank-select-label">ธนาคาร</InputLabel>
-                <Select
-                  className="bg-white"
-                  labelId="bank-select-label"
-                  id="bank"
-                  value={formData.bank}
-                  label="ธนาคาร"
-                  onChange={handleSelectChange}
-                >
-                  {loading ? (
-                    <MenuItem disabled>กำลังโหลดข้อมูล...</MenuItem>
-                  ) : (
-                    banks.map((bank) => (
-                      <MenuItem key={bank.id} value={bank.id}>
-                        {bank.name} 
-                      </MenuItem>
-                    ))
-                  )}
-                </Select>
-              </FormControl>
-            </div> */}
+              <TextField
+                id="bookBankNumber"
+                label="หมายเลขบัญชีธนาคาร"
+                variant="outlined"
+                className="w-full bg-white"
+                required
+                value={formData.bookBankNumber}
+                onChange={handleInputChange}
+                inputProps={{
+                  maxLength: 15, // จำกัดให้กรอกไม่เกิน 15 หลัก
+                  pattern: "[0-9]*", // อนุญาตให้กรอกเฉพาะตัวเลข
+                  inputMode: "numeric", // แสดงคีย์บอร์ดตัวเลขบนมือถือ
+                }}
+                error={
+                  formData.bookBankNumber.length > 15 ||
+                  formData.bookBankNumber.length < 10
+                } // แสดง error หากจำนวนหลักเกิน 15 หรือน้อยกว่า 10
+                helperText={
+                  formData.bookBankNumber.length > 15
+                    ? "หมายเลขบัญชีธนาคารต้องไม่เกิน 15 หลัก"
+                    : formData.bookBankNumber.length < 10
+                    ? "หมายเลขบัญชีธนาคารต้องมีอย่างน้อย 10 หลัก"
+                    : ""
+                }
+              />
+            </div>
 
-        <div className="w-full md:w-1/2 px-2 mt-4">
+            <div className="w-full md:w-1/2 px-2 mt-4">
               <FormControl fullWidth>
                 <InputLabel id="bank-select-label">ธนาคาร</InputLabel>
                 <Select
@@ -314,61 +299,102 @@ console.log("Bank",banks)
                   onChange={handleSelectChange}
                 >
                   {/* Add all bank options here */}
-                  <MenuItem value="3">ธนาคารกรุงเทพ จำกัด (มหาชน) (Bangkok Bank Public Company Limited)</MenuItem>
-                  <MenuItem value="4">ธนาคารกรุงไทย จำกัด (มหาชน) (Krungthai Bank Public Company Limited)</MenuItem>
-                  <MenuItem value="5">ธนาคารกรุงศรีอยุธยา จำกัด (มหาชน) (Bank of Ayudhya Public Company Limited - Krungsri)</MenuItem>
-                  <MenuItem value="6">ธนาคารกสิกรไทย จำกัด (มหาชน) (Kasikornbank Public Company Limited)</MenuItem>
-                  <MenuItem value="7">ธนาคารซีไอเอ็มบี ไทย จำกัด (มหาชน) (CIMB Thai Bank Public Company Limited)</MenuItem>
-                  <MenuItem value="8">ธนาคารทหารไทยธนชาต จำกัด (มหาชน) (TMBThanachart Bank Public Company Limited - TTB Bank)</MenuItem>
-                  <MenuItem value="9">ธนาคารทิสโก้ จำกัด (มหาชน) (TISCO Bank Public Company Limited)</MenuItem>
-                  <MenuItem value="10">ธนาคารไทยเครดิต จำกัด (มหาชน) (Thai Credit Retail Bank Public Company Limited)</MenuItem>
-                  <MenuItem value="11">ธนาคารไทยพาณิชย์ จำกัด (มหาชน) (Siam Commercial Bank Public Company Limited - SCB)</MenuItem>
-                  <MenuItem value="12">ธนาคารยูโอบี จำกัด (มหาชน) (United Overseas Bank - Thai - Public Company Limited - UOB)</MenuItem>
-                  <MenuItem value="13">ธนาคารแลนด์ แอนด์ เฮ้าส์ จำกัด (มหาชน) (Land and Houses Bank Public Company Limited)</MenuItem>
-                  <MenuItem value="14">ธนาคารสแตนดาร์ดชาร์เตอร์ด (ไทย) จำกัด (มหาชน) (Standard Chartered Bank - Thai - Public Company Limited)</MenuItem>
-                  <MenuItem value="15">ธนาคารไอซีบีซี (ไทย) จำกัด (มหาชน) (Industrial and Commercial Bank of China - Thai - Public Company Limited - ICBC)</MenuItem>
-                  <MenuItem value="16">ธนาคารแห่งประเทศจีน (ไทย) จำกัด (มหาชน) (Bank of China - Thai - Public Company Limited)</MenuItem>
+                  <MenuItem value="3">
+                    ธนาคารกรุงเทพ จำกัด (มหาชน) (Bangkok Bank Public Company
+                    Limited)
+                  </MenuItem>
+                  <MenuItem value="4">
+                    ธนาคารกรุงไทย จำกัด (มหาชน) (Krungthai Bank Public Company
+                    Limited)
+                  </MenuItem>
+                  <MenuItem value="5">
+                    ธนาคารกรุงศรีอยุธยา จำกัด (มหาชน) (Bank of Ayudhya Public
+                    Company Limited - Krungsri)
+                  </MenuItem>
+                  <MenuItem value="6">
+                    ธนาคารกสิกรไทย จำกัด (มหาชน) (Kasikornbank Public Company
+                    Limited)
+                  </MenuItem>
+                  <MenuItem value="7">
+                    ธนาคารซีไอเอ็มบี ไทย จำกัด (มหาชน) (CIMB Thai Bank Public
+                    Company Limited)
+                  </MenuItem>
+                  <MenuItem value="8">
+                    ธนาคารทหารไทยธนชาต จำกัด (มหาชน) (TMBThanachart Bank Public
+                    Company Limited - TTB Bank)
+                  </MenuItem>
+                  <MenuItem value="9">
+                    ธนาคารทิสโก้ จำกัด (มหาชน) (TISCO Bank Public Company
+                    Limited)
+                  </MenuItem>
+                  <MenuItem value="10">
+                    ธนาคารไทยเครดิต จำกัด (มหาชน) (Thai Credit Retail Bank
+                    Public Company Limited)
+                  </MenuItem>
+                  <MenuItem value="11">
+                    ธนาคารไทยพาณิชย์ จำกัด (มหาชน) (Siam Commercial Bank Public
+                    Company Limited - SCB)
+                  </MenuItem>
+                  <MenuItem value="12">
+                    ธนาคารยูโอบี จำกัด (มหาชน) (United Overseas Bank - Thai -
+                    Public Company Limited - UOB)
+                  </MenuItem>
+                  <MenuItem value="13">
+                    ธนาคารแลนด์ แอนด์ เฮ้าส์ จำกัด (มหาชน) (Land and Houses Bank
+                    Public Company Limited)
+                  </MenuItem>
+                  <MenuItem value="14">
+                    ธนาคารสแตนดาร์ดชาร์เตอร์ด (ไทย) จำกัด (มหาชน) (Standard
+                    Chartered Bank - Thai - Public Company Limited)
+                  </MenuItem>
+                  <MenuItem value="15">
+                    ธนาคารไอซีบีซี (ไทย) จำกัด (มหาชน) (Industrial and
+                    Commercial Bank of China - Thai - Public Company Limited -
+                    ICBC)
+                  </MenuItem>
+                  <MenuItem value="16">
+                    ธนาคารแห่งประเทศจีน (ไทย) จำกัด (มหาชน) (Bank of China -
+                    Thai - Public Company Limited)
+                  </MenuItem>
                 </Select>
               </FormControl>
             </div>
 
+            {/* 3 Bangkok Bank Public Company Limited
+            4 Krungthai Bank Public Company Limited
+            5 Bank of Ayudhya Public Company Limited (Krungsri)
+            6 Kasikornbank Public Company Limited
+            7 CIMB Thai Bank Public Company Limited
+            8 TMBThanachart Bank Public Company Limited (TTB Bank)
+            9 TISCO Bank Public Company Limited
+            10 Thai Credit Retail Bank Public Company Limited
+            11 Siam Commercial Bank Public Company Limited (SCB)
+            12 United Overseas Bank (Thai) Public Company Limited (UOB)
+            13 Land and Houses Bank Public Company Limited
+            14 Standard Chartered Bank (Thai) Public Company Limited
+            15 Industrial and Commercial Bank of China (Thai) Public Company Limited (ICBC)
+            16 Bank of China (Thai) Public Company Limited */}
 
-{/* 3 Bangkok Bank Public Company Limited
-4 Krungthai Bank Public Company Limited
-5 Bank of Ayudhya Public Company Limited (Krungsri)
-6 Kasikornbank Public Company Limited
-7 CIMB Thai Bank Public Company Limited
-8 TMBThanachart Bank Public Company Limited (TTB Bank)
-9 TISCO Bank Public Company Limited
-10 Thai Credit Retail Bank Public Company Limited
-11 Siam Commercial Bank Public Company Limited (SCB)
-12 United Overseas Bank (Thai) Public Company Limited (UOB)
-13 Land and Houses Bank Public Company Limited
-14 Standard Chartered Bank (Thai) Public Company Limited
-15 Industrial and Commercial Bank of China (Thai) Public Company Limited (ICBC)
-16 Bank of China (Thai) Public Company Limited */}
-            
             <div className="w-full px-2 mt-4">
               <div>
                 <label>ถ่ายรูปตนเองพร้อมถือบัตรประจำตัวประชาชน</label>
               </div>
-              <WebcamCapture 
-                className="bg-white" 
-                id="image" 
-                onCapture={handleCaptureimage} 
+              <WebcamCapture
+                className="bg-white"
+                id="image"
+                onCapture={handleCaptureimage}
                 ModuleName="IDCard"
               />
             </div>
 
             <div className="w-full px-2 mt-4">
               <label>ถ่ายหน้าบุ๊คแบงก์</label>
-              <WebcamCapture2 
-                className="bg-white" 
-                id="bookBankImage" 
-                onCapture={handleCaptureBookBankImage} 
+              <WebcamCapture2
+                className="bg-white"
+                id="bookBankImage"
+                onCapture={handleCaptureBookBankImage}
                 ModuleName="BookBank"
               />
-
             </div>
             <div className="w-full px-2 mt-4">
               <TextField
@@ -388,12 +414,6 @@ console.log("Bank",banks)
           </div>
         </div>
 
-        {/* <div className="container mx-auto px-4 mt-10 mb-5">
-          <h3>Debugging Information</h3>
-          <pre>{JSON.stringify(formData, null, 2)}</pre>
-          <p>Is Form Valid: {isFormValid ? "Yes" : "No"}</p>
-        </div> */}
-
         <div className="container mx-auto px-4 mt-10 mb-5">
           <Checkbox
             id="checkedOne"
@@ -406,13 +426,13 @@ console.log("Bank",banks)
             <strong>ยอมรับเงื่อนไข</strong>{" "}
           </span>
         </div>
-       
+
         <div className="container mx-auto px-4">
           <button
             type="submit"
             disabled={!isFormValid}
             className={`w-full h-12 mb-10 flex justify-center rounded-xl items-center text-white ${
-              isFormValid ? "bg-green-500" : "bg-slate-300"
+              isFormValid ? "bg-[#FBB615]" : "bg-slate-300"
             }`}
           >
             บันทึกข้อมูล

@@ -1,31 +1,30 @@
-import { updateUser as apiUpdateUser } from '../strapi/userApi';
+import { updateUser as apiUpdateUser } from "../strapi/userApi";
 
 export const updateUser = async (
-    userId: number,
-    userData: {
-        fullName: string;
-        gender: string;
-        address: string;
-        cardID: string;
-        telNumber: string;
-        photoImage?: number;  // Optional photoImage
-    },
-    token: string
+  userId: number,
+  userData: {
+    fullName: string;
+    gender: string;
+    address: string;
+    cardID: string;
+    telNumber: string;
+    photoImage?: number; // Optional photoImage
+  },
+  token: string
 ) => {
-    try {
-        // You can add any business logic here before calling the API
+  try {
+    // You can add any business logic here before calling the API
 
-        const updatedUser = await apiUpdateUser(userId, userData, token);
+    const updatedUser = await apiUpdateUser(userId, userData, token);
 
-        // You can add any business logic here after calling the API
+    // You can add any business logic here after calling the API
 
-        return updatedUser;
-    } catch (error) {
-        console.error('Business logic error while updating user:', error.message);
-        throw error;
-    }
+    return updatedUser;
+  } catch (error) {
+    console.error("Business logic error while updating user:", error.message);
+    throw error;
+  }
 };
-
 
 // In ../strapi/userApi.ts
 
