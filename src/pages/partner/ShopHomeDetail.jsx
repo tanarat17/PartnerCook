@@ -1,3 +1,4 @@
+// src\pages\partner\ShopHomeDetail.jsx
 import Header from "../../components/partner/Header";
 import { useState } from "react";
 import { Box, Card, CardContent, CardHeader, IconButton, Typography } from '@mui/material';
@@ -17,20 +18,6 @@ function ShopHomeDetail() {
   const [result, setResult] = useState('No result');
   const [isScanning, setIsScanning] = useState(false);
 
-  // const handleScan = (data) => {
-  //   if (data) {
-  //     setIsScanning(false);
-
-  //     try {
-  //       const parsedData = JSON.parse(data);
-  //       navigate('/partner/ShopHomeDetailResive', { state: parsedData });
-
-  //     } catch (error) {
-  //       console.error("Error parsing QR code data:", error);
-  //       setResult("ไม่สามารถอ่านข้อมูล QR Code ได้");
-  //     }
-  //   }
-  // };
 
   const handleScan = (data) => {
     if (data) {
@@ -66,11 +53,6 @@ function ShopHomeDetail() {
     }
   };
   
-  
-  
-  
-  
-
   const handleError = (err) => {
     console.error(err);
   };

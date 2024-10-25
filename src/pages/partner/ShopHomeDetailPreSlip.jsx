@@ -40,7 +40,7 @@ function ShopHomeDetailPreSlip() {
                 console.log("Invoices data received:", invoicesData);
   
                 if (invoicesData.data.attributes && invoicesData.data.attributes.invoices && Array.isArray(invoicesData.data.attributes.invoices.data)) {
-                    setInvoices(invoicesData.data.attributes.invoices.data); // ดึงข้อมูล array ของ invoices
+                    setInvoices(invoicesData.data.attributes.invoices.data);
                 } else {
                     console.error("No invoices found in the response or invoices is not an array");
                     setInvoices([]); 
@@ -67,7 +67,7 @@ function ShopHomeDetailPreSlip() {
         );
         setFilteredInvoices(filtered);
     } else {
-        console.error("Invoices is not an array:", invoices); // แสดงข้อผิดพลาดถ้า invoices ไม่ใช่ Array
+        console.error("Invoices is not an array:", invoices); 
     }
   }, [searchQuery, invoices]);
 

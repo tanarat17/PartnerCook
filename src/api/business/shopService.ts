@@ -31,7 +31,7 @@ export const createNewShop = async (
             bookBankNumber: shop.bookBankNumber,
             image: shop.image,  // Image ID for the shop
             bookBankImage: shop.bookBankImage,  // Image ID for the book bank
-            bankName: shop.bankName,  // Bank ID
+            bank: shop.bank,  // Bank ID
         };
 
         const response = await createShop(token, shopData);
@@ -49,7 +49,7 @@ export const createNewShop = async (
             bookBankNumber: response.data.attributes.bookBankNumber,
             image: response.data.attributes.image,  // Image ID
             bookBankImage: response.data.attributes.bookBankImage,  // Image ID
-            bankName: response.data.attributes.bankName,
+            bank: response.data.attributes.bank,
         };
 
         return createdShop;

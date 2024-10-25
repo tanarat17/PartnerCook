@@ -343,76 +343,71 @@ export default function AddProduct() {
           </Grid>
         </Box>
       </Modal>
-
       {products.map((product) => {
-            if (!product || typeof product.approved === 'undefined') {
-              return null;
-            }
-            return (
-              <div key={product.id} className="relative w-full h-auto bg-white rounded-md inner-shadow p-5 mt-10">
-                <div className="grid grid-cols-3 gap-4">
-                  {/* สี่เหลี่ยมสถานะการอนุมัติ */}
-                  <div
-                    className={`absolute top-2 right-2 px-3 py-1 text-white font-bold rounded-md ${product.approved ? 'bg-green-500' : 'bg-yellow-500'
-                      }`}
-                    title={product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
-                  >
-                    {product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
-                  </div>
+  if (!product || typeof product.approved === 'undefined') {
+    return null;
+  }
+  return (
+    <div key={product.id} className="relative w-full h-auto bg-white rounded-md inner-shadow p-5 mt-10">
+      <div className="grid grid-cols-3 gap-4">
+        {/* สี่เหลี่ยมสถานะการอนุมัติ */}
+        <div
+          className={`absolute top-2 right-2 px-3 py-1 text-white font-bold rounded-md ${product.approved ? 'bg-green-500' : 'bg-yellow-500'} ml-2`}
+          title={product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
+        >
+          {product.approved ? 'อนุมัติแล้ว' : 'รออนุมัติ'}
+        </div>
 
-                  {/* ปุ่มแก้ไข */}
-                  <button
-                  className="absolute top-2 right-24 px-3 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-700 flex items-center"
-                  onClick={() => handleEdit(product)} 
-                  title="แก้ไขสินค้า"
-                >
-                  <FaEdit className="mr-1" /> {/* ไอคอน Edit */}
-                  แก้ไข
-                </button>
+        {/* ปุ่มแก้ไข */}
+        <button
+          className="absolute top-2 right-24 px-3 py-1 text-white bg-blue-500 rounded-md hover:bg-blue-700 flex items-center mr-2"
+          onClick={() => handleEdit(product)}
+          title="แก้ไขสินค้า"
+        >
+          <FaEdit className="mr-1" /> {/* ไอคอน Edit */}
+          แก้ไข
+        </button>
+        <div>
+          {/* ตรวจสอบว่ามี image หรือไม่ */}
+          {product.image?.data?.attributes?.url ? (
+            <img
+              src={`${API_URL}${product.image.data.attributes.url}`}
+              alt={product.name || 'No Name'}
+              className="w-full h-auto cursor-pointer"
+              onClick={() => {     
+                // setModalImage(product.image.data.attributes.url);
+              }}
+            />
+          ) : (
+            <img src={onion} alt="default" className="w-full h-auto" />
+          )}
+        </div>
+        <p className="col-span-2 text-2xl mt-8">{product.name || 'No Name'}</p>
+      </div>
 
-                  <div>
-                    {/* ตรวจสอบว่ามี image หรือไม่ */}
-                    {product.image && product.image.data && product.image.data.attributes && product.image.data.attributes.url ? (
-                      <img
-                        src={`${API_URL}${product.image.data.attributes.url}`}
-                        alt={product.name || 'No Name'}
-                        className="w-full h-auto"
-                      />
-                    ) : (
-                      <img src={onion} alt="default" className="w-full h-auto" />
-                    )}
-                  </div>
-                  <p className="col-span-2 text-2xl mt-8">{product.name || 'No Name'}</p>
-                </div>
+      {/* ส่วนแสดงข้อมูลสินค้าอื่น ๆ */}
+      <div className="grid grid-cols-4 gap-4 py-5">
+        <p className="col-span-2 text-lg">จำนวนสินค้าในสต็อก</p>
+        <p className="text-center text-lg">{product.numStock ?? 0}</p>
+        <p className="text-right text-lg">ชิ้น</p>
+      </div>
 
-                {/* ส่วนแสดงข้อมูลสินค้าอื่น ๆ */}
-                <div className="grid grid-cols-4 gap-4 py-2 ">
-                <p className="col-span-2">จำนวนสินค้าในสต็อก</p>
-                <p className="text-center">{product.numStock || 0}</p>
-                <p className="text-right">ชิ้น</p>
-              </div>
+      <div className="grid grid-cols-4 gap-4 py-5">
+        <p className="col-span-2 text-lg">ราคาต่อชิ้น</p>
+        <p className="text-center text-lg">{product.price ?? 0}</p>
+        <p className="text-right text-lg">บาท</p>
+      </div>
 
-              <div className="grid grid-cols-4 gap-4 py-2 ">
-                <p className="col-span-2">ราคาต่อชิ้น</p>
-                <p className="text-center">{product.price || 0}</p>
-                <p className="text-right">บาท</p>
-              </div>
-
-              <div className="grid grid-cols-4 gap-4 py-2 ">
-                <p className="col-span-2">จำนวนเงินทั้งหมด</p>
-                <p className="text-center">{(product.price * product.numStock) || 0}</p>
-                <p className="text-right">บาท</p>
-              </div>
-              </div>
-            );
-          })}
-
-
+      <div className="grid grid-cols-4 gap-4 py-5">
+        <p className="col-span-2 text-lg">จำนวนเงินทั้งหมด</p>
+        <p className="text-right text-lg">บาท</p>
+        <p className="text-center text-lg">{product.price * product.numStock}</p>
+      </div>
+    </div>
+  );
+})}
 <footer className=" text-white py-5 mt-10">
-  
 </footer>
-
-
     </Container>
     </ThemeProvider>
   );

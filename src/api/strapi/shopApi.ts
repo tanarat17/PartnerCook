@@ -35,6 +35,7 @@ export const getAllShops = async (token: string): Promise<Shop[]> => {
             updatedAt: item.attributes.updatedAt,
             publishedAt: item.attributes.publishedAt,
             bookBankNumber: item.attributes.bookBankNumber,
+            bank: item.attributes.bank,
             image: item.attributes.image,
         }));
         return shops;
@@ -43,6 +44,25 @@ export const getAllShops = async (token: string): Promise<Shop[]> => {
         throw error;
     }
 };
+
+
+export const getRedeemIdByProductId = async (shopId: string, productId: string): Promise<string | null> => {
+    try {
+      const redeemData = await fetchShopRedeem(shopId);
+      const redeems = redeemData.data.attributes.redeems.data;
+      const matchedRedeem = redeems.find(redeem => {
+        const productJson = redeem.attributes.productJsonArray;
+        const products = JSON.parse(productJson);
+        return products.some(product => product.id === productId);
+      });
+      return matchedRedeem ? matchedRedeem.id : null;
+    } catch (error) {
+      console.error("Error fetching redeem data:", error);
+      return null;
+    }
+  };
+
+  
 
 export const getShopsByUserID = async (token, shopId) => {
     try {
@@ -69,35 +89,33 @@ export const getShopsByUserID = async (token, shopId) => {
 };
 export const getShopById = async (token, userId) => {
     try {
-        const response = await fetch(`${API_URL}/api/users/${userId}?populate=shop`, {
+        const response = await fetch(`${API_URL}/api/users/${userId}?populate[shop][populate]=*`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                // Authorization: `Bearer ${token}`,
+                // Authorization: `Bearer ${token}`, // Uncomment if needed
             },
         });
 
         if (!response.ok) {
             const errorData = await response.json();
             console.error('Error fetching shop by ID:', errorData);
-            throw new Error(`Request failed with status ${response.status}`);
+            throw new Error(`Request failed with status ${response.status}: ${errorData.message || ''}`);
         }
 
-        const textData = await response.text();
-        console.log('Raw response:', textData); // ดูข้อมูลตอบกลับดิบ
+        // ใช้ response.json() แทน response.text()
+        const data = await response.json();
 
-        if (!textData) {
-            throw new Error('No data returned from the server');
+        if (!data || !data.shop) {
+            throw new Error('No shop data returned from the server');
         }
 
-        const data = JSON.parse(textData);
         return data;
     } catch (error) {
         console.error('Error fetching shop by ID:', error);
         throw error;
     }
 };
-
 
 
   const getRedeemByShop = async (shopId) => {
@@ -306,25 +324,9 @@ export const getBank = async (token: string): Promise<Bank[]> => {
     }
 };
 
-
-// export const fetchShopInvoices = async (shopId) => {
-//     try {
-
-//         const url = `${API_URL}/api/shops/${shopId}?populate[invoices]=*`; 
-//         const response = await fetch(`${url}/api/shops/${shopId}?populate[invoices]=*`);
-//         // const url = `${API_URL}/api/banks`; 
-
-//         const data = await response.json();
-//         console.log(data);
-//         return data;
-//     } catch (error) {
-//         console.error('Error fetching shop invoices:', error);
-//     }
-// };
-
-
 export const fetchShopInvoices = async (shopId) => {
     try {
+        // ปรับให้รวม populate สำหรับ redeem และ customer
         const url = `${API_URL}/api/shops/${shopId}?populate[invoices][populate]=redeem.customer`;
 
         const response = await fetch(url, {
@@ -342,20 +344,6 @@ export const fetchShopInvoices = async (shopId) => {
 
         const data = await response.json();
         console.log("Invoices data received:", data);
-
-        // ดึง username จาก customer
-        if (data.data && data.data.attributes.invoices.data.length > 0) {
-            const invoices = data.data.attributes.invoices.data;
-            invoices.forEach(invoice => {
-                if (invoice.attributes.redeem && invoice.attributes.redeem.data) {
-                    const customer = invoice.attributes.redeem.data.attributes.customer.data.attributes;
-                    const username = customer.username; // ดึง username
-
-                    console.log("Customer Username:", username); // แสดง username
-                }
-            });
-        }
-
         return data;
     } catch (error) {
         console.error('Error fetching invoices:', error);
@@ -364,8 +352,55 @@ export const fetchShopInvoices = async (shopId) => {
 };
 
 
+export const fetchShopRedeem = async (shopId) => {
+    try {
+        const url = `${API_URL}/api/shops/${shopId}?populate=redeems`;
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error fetching redeem data:', errorData);
+            throw new Error(`Request failed with status ${response.status}`);
+        }
 
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching redeem data Back-END :', error);
+        throw error;
+    }
+};
+
+const updateRedeemStatus = async (token, redeemId, updateData) => {
+    try {
+        const url = `http://localhost:1337/api/redeems/${redeemId}`;
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ data: updateData })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error updating Redeem status:', errorData);
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error updating Redeem status:', error);
+        throw error;
+    }
+};
 
 
 

@@ -36,6 +36,22 @@ body {
   margin-bottom: 2rem;
 }
 
+.shop-3 {
+  display:flex;
+  flex-direction: column;
+  width: auto;
+  height: auto;
+  margin-top: rem;
+  padding-bottom: 2rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+}
+
+
+
 .circle {
   width: 95px;
   height: 95px;

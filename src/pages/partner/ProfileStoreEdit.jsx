@@ -11,6 +11,25 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 
 function ProfileStoreEdit() {
+
+  const BANK_OPTIONS = {
+    3: "Bangkok Bank Public Company Limited",
+    4: "Krungthai Bank Public Company Limited",
+    5: "Bank of Ayudhya Public Company Limited - Krungsri",
+    6: "Kasikornbank Public Company Limited",
+    7: "CIMB Thai Bank Public Company Limited",
+    8: "TMBThanachart Bank Public Company Limited - TTB Bank",
+    9: "TISCO Bank Public Company Limited",
+    10: "Thai Credit Retail Bank Public Company Limited",
+    11: "Siam Commercial Bank Public Company Limited - SCB",
+    12: "United Overseas Bank - Thai - Public Company Limited - UOB",
+    13: "Land and Houses Bank Public Company Limited",
+    14: "Standard Chartered Bank - Thai - Public Company Limited",
+    15: "Industrial and Commercial Bank of China - Thai - Public Company Limited - ICBC",
+    16: "Bank of China - Thai - Public Company Limited"
+  };
+
+
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [banks, setBanks] = useState([]); // สำหรับเก็บข้อมูลธนาคาร
@@ -44,12 +63,14 @@ function ProfileStoreEdit() {
         if (shopData && typeof shopData === 'object') {
           setShops([shopData]); // ตั้งค่า shops ด้วยข้อมูลที่ได้รับ
           // อัปเดตค่าฟอร์มด้วยข้อมูลที่ได้รับ
+
+          console.log(" FRONT SHOP DATA"+shopData);
           setFormData({
             name: shopData.shop.name || '',
             fullName: shopData.fullName || '',
             cardID: shopData.cardID || '',
             bookBankNumber: shopData.shop.bookBankNumber || '',
-            bank: shopData.shop.bank || '',
+            bank: BANK_OPTIONS[shopData.shop.bank.id] || '', 
             location: shopData.shop.location || '',
             image: shopData.shop.image || '',
             bookBankImage: shopData.shop.bookBankImage || '',
@@ -175,7 +196,7 @@ function ProfileStoreEdit() {
               />
             </div>
             
-            <div className="w-full md:w-1/2 px-2 mt-4">
+            {/* <div className="w-full md:w-1/2 px-2 mt-4">
               <FormControl fullWidth>
                 <InputLabel id="bank-select-label">ธนาคาร</InputLabel>
                 <Select
@@ -191,35 +212,89 @@ function ProfileStoreEdit() {
                   ) : (
                     banks.map((bank) => (
                       <MenuItem key={bank.id} value={bank.id}>
-                        {bank.name} {/* แสดงชื่อธนาคาร */}
+                        {bank.name} 
                       </MenuItem>
                     ))
                   )}
                 </Select>
               </FormControl>
-            </div>
+            </div>  */}
+
+            <div className="w-full md:w-1/2 px-2 mt-4">
+            <FormControl fullWidth>
+              <InputLabel id="bank-select-label">ธนาคาร</InputLabel>
+              <Select
+                className="bg-white"
+                labelId="bank-select-label"
+                id="bank"
+                value={formData.bank} // Display the bank name here
+                label="ธนาคาร"
+                onChange={handleSelectChange}
+              >
+                {/* Loop through BANK_OPTIONS to generate MenuItems */}
+                {Object.entries(BANK_OPTIONS).map(([id, name]) => (
+                  <MenuItem key={id} value={name}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
             
+
             <div className="w-full px-2 mt-4">
               <div>
                 <label>ถ่ายรูปตนเองพร้อมถือบัตรประจำตัวประชาชน</label>
               </div>
+              <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
               <WebcamCapture 
                 className="bg-white" 
                 id="image" 
                 onCapture={handleCaptureimage} 
                 ModuleName="IDCard"
               />
+                <div className="w-full px-2 mt-4">
+                {formData.image && (
+                  <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
+                    <img 
+                      src={`${API_URL}${formData.image.url}`}
+                      alt="IDCardIMG" 
+                      style={{ width: '100%', maxWidth: '400px', height: 'auto' }} 
+                    />
+                  </div>
+                )}
+                </div>
+              </div>
             </div>
 
+
             <div className="w-full px-2 mt-4">
+              <div>
               <label>ถ่ายหน้าบุ๊คแบงก์</label>
-              <WebcamCapture2 
+              </div>
+              <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
+              <WebcamCapture 
                 className="bg-white" 
                 id="bookBankImage" 
                 onCapture={handleCaptureBookBankImage} 
                 ModuleName="BookBank"
               />
+                <div className="w-full px-2 mt-4">
+                {formData.bookBankImage && (
+                  <div className="mt-4 border-2 border-gray-300 p-4 rounded-md">
+                    <img 
+                      src={`${API_URL}${formData.bookBankImage.url}`}
+                      alt="BookBankIMG" 
+                      style={{ width: '100%', maxWidth: '400px', height: 'auto' }} 
+                    />
+                  </div>
+                )}
+                </div>
+              </div>
             </div>
+
+
+
             <div className="w-full px-2 mt-4">
               <TextField
                 label="ที่อยู่"

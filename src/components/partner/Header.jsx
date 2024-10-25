@@ -8,8 +8,20 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useLiff } from 'react-liff';
 import Swal from 'sweetalert2';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { getShopById } from "../../api/strapi/shopApi";
+import { Link } from "react-router-dom";
+
 
 const Header = () => {
+    const [shopData, setShopData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(null);
+  
+    const token = localStorage.getItem('accessToken') || import.meta.env.VITE_TOKEN_TEST;
+    const users = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = users.id;
+
+
     const [menuOpen, setMenuOpen] = useState(false);
     const [displayName, setDisplayName] = useState('');
     const navigate = useNavigate();
@@ -25,6 +37,34 @@ const Header = () => {
         };
         checkLoginStatus();
     }, [liff]);
+
+
+    useEffect(() => {
+        const fetchPartnerData = async () => {
+          try {
+            setIsLoading(true);
+            const shopData = await getShopById(token, userId);
+    
+            console.log('Fetched shop data:', shopData);
+    
+            if (shopData && typeof shopData === 'object' && shopData.shop) {
+              setShopData([shopData.shop]);
+            } else {
+              // กรณีไม่พบข้อมูลร้านค้า ให้เปลี่ยนไปหน้า ProfileStore
+              // navigate('/PDPA');
+            }
+          } catch (error) {
+            setFetchError('Error: Shop data is undefined or missing.');
+            // navigate('/PDPA');
+          } finally {
+            setIsLoading(false);
+          }
+        };
+    
+        fetchPartnerData();
+      }, [token, userId]);
+
+
 
     // ฟังก์ชันสลับเมนูแสดง/ซ่อน
     const toggleMenu = () => {
@@ -89,30 +129,55 @@ const Header = () => {
                             ข้อมูลร้านค้า
                         </NavLink>
                         {/* เนื้อหาหรือเมนูอื่นๆ */}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
+                        {shopData.map((shop) => {
+                            const shopDetails = shop || {};
+
+                            return (
+                            <Link to={`/partner/ProfileStoreEdit`} key={shop.id}>
+                                <div className="shop-3">
+                                <span
+                                    className="circle"
+                                    style={{
+                                    backgroundImage: shop.image?.data?.attributes?.url
+                                        ? `url(${shop.image.data.attributes.url})`
+                                        : 'url(https://cdn.britannica.com/70/234870-050-D4D024BB/Orange-colored-cat-yawns-displaying-teeth.jpg)',
+                                    backgroundSize: "cover",
+                                    }}
+                                ></span>
+                                <span className="pl-2">{shop.name}</span>
+                                </div>
+                            </Link>
+                            );
+                        })}
+                        </div>
                         {/* ปุ่ม Logout ที่อยู่ล่างสุด */}
                         {isLoggedIn && (
                             <Box
-                                sx={{
-                                    position: 'absolute',
-                                    bottom: 2,
-                                    width: '50%',
-                                    p: 1,
-                                    bgcolor: "white",
-                                    display: 'flex',
-                                    justifyContent: 'center'
-                                }}
+                            sx={{
+                              position: 'absolute',
+                              bottom: 2,
+                              left: 0,
+                              right: 0,
+                              margin: 'auto',
+                              p: 1,
+                              bgcolor: "white",
+                              display: 'flex',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <Button
+                              variant="contained"
+                              color="error"
+                              startIcon={<LogoutIcon />}
+                              onClick={handleLogout}
+                              fullWidth
+                              sx={{ maxWidth: '300px' }}
                             >
-                                <Button
-                                    variant="contained"
-                                    color="error" // สีแดง
-                                    startIcon={<LogoutIcon />} // เพิ่มไอคอนก่อนข้อความ
-                                    onClick={handleLogout}
-                                    fullWidth // ทำให้ปุ่มยาวเต็มความกว้าง
-                                    sx={{ maxWidth: '300px' }} // กำหนดความกว้างสูงสุด (ถ้าต้องการให้ปุ่มไม่ยาวเกินไป)
-                                >
-                                    Logout
-                                </Button>
-                            </Box>
+                              Logout
+                            </Button>
+                          </Box>
                         )}
                     </Box>
                 </Box>

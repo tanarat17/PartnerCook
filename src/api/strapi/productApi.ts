@@ -64,6 +64,7 @@ export const getAllProductsByShopId = async (token: string, shopId: number): Pro
                     publishedAt: shopData.publishedAt || null,
                 },
                 numStock: item.attributes.numStock || 0, // เพิ่มฟิลด์ numStock และตั้งค่าเริ่มต้นเป็น 0 หากไม่มี
+                type: item.attributes.type || 'ไม่ระบุประเภทสินค้า',
             };
         });
 
@@ -201,33 +202,29 @@ export const getProductByID = async (token: string, userLineId: number, productI
             console.error('Error fetching ProductByID ID:', errorData);
             throw new Error(`Request failed with status ${response.status}: ${errorData.message || 'Unauthorized'}`);
         }
-    
-        // ดึงข้อมูล JSON
+
         const data = await response.json();
-        console.log("Response:", data);
-    
-        // ตรวจสอบและจัดการข้อมูล
+        console.log("Response ProductAPI :", data);
+
         if (data.data) {
-            const product = data.data; // ข้อมูลผลิตภัณฑ์
+            const product = data.data; 
         
             // ดึงข้อมูลจาก attributes
-            const attributes = product.attributes || {}; // ถ้า attributes ไม่มี ให้ใช้ object ว่าง
+            const attributes = product.attributes || {};
             const id = product.id || 'ID ไม่ระบุ'; // ตรวจสอบ ID
             const name = attributes.name || 'ชื่อไม่ระบุ'; // ตรวจสอบชื่อ
             const description = attributes.description || 'ไม่มีคำอธิบาย'; // ตรวจสอบคำอธิบาย
             const price = attributes.price !== undefined ? attributes.price : 'ไม่มีราคา'; // ตรวจสอบราคา
             const numStock = attributes.numStock !== undefined ? attributes.numStock : 'ไม่มีข้อมูลจำนวนในสต็อก'; // ตรวจสอบจำนวนในสต็อก
             const approved = attributes.approved !== undefined ? attributes.approved : 'สถานะไม่ระบุ'; // ตรวจสอบสถานะการอนุมัติ
-        
-            // แสดงผลข้อมูล
+
             console.log(`Product ID: ${id}`);
             console.log(`Product Name: ${name}`);
             console.log(`Description: ${description}`);
             console.log(`Price: ${price}`);
             console.log(`Number in Stock: ${numStock}`);
             console.log(`Approved: ${approved}`);
-        
-            // ส่งค่าที่ต้องการกลับ
+
             return { id, name, description, price, numStock, approved }; 
         } else {
             console.warn('No ProductByID found with the provided ID.');
@@ -236,7 +233,7 @@ export const getProductByID = async (token: string, userLineId: number, productI
         
     } catch (error) {
         console.error('Error fetching ProductByID:', error.message);
-        throw error; // ถ้ามีข้อผิดพลาด ให้โยนออกมาเพื่อจัดการต่อ
+        throw error; 
     }
     
 };

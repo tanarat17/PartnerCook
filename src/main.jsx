@@ -23,7 +23,6 @@ import MapKamalad from './components/MapKamalad.jsx';
 import Conclusion from './pages/Conclusion.jsx';
 import MachinePosition from './pages/MachinePosition.jsx';
 import ContactUs from './pages/ContactUs.jsx';
-import ConfirmOrder from './pages/partner/ConfirmOrder.jsx';
 import ProfileStore from './pages/partner/ProfileStore.jsx';
 import ContactUs_Partner from './pages/partner/ContactUs.jsx';
 import PDPA from './pages/partner/PDPA.jsx';
@@ -44,6 +43,8 @@ import ShopHomeDetailResive from './pages/partner/ShopHomeDetailResive.jsx';
 import ProfileStoreEdit from './pages/partner/ProfileStoreEdit.jsx';
 import ShopHomeDetailPreSlip from './pages/partner/ShopHomeDetailPreSlip.jsx';
 import { useLiff } from 'react-liff';
+
+
 
 
 // const cors = require("cors");
@@ -153,10 +154,7 @@ const router = createBrowserRouter([
     path: "/contact-us",
     element: <ContactUs />
   },
-  {
-    path: "/partner",
-    element: <ConfirmOrder />
-  },
+
   {
     path: "/partner/ProfileStore",
     element: <ProfileStore />

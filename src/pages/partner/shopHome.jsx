@@ -2,74 +2,65 @@ import Header from "../../components/partner/Header";
 import { Link } from "react-router-dom";
 import { getShopById } from "../../api/strapi/shopApi";
 import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
 
-function ShopHome() {
-  const [shops, setShops] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+function PartnerHome() {
+  const [shopData, setShopData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(null);
 
-  const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('accessToken') || import.meta.env.VITE_TOKEN_TEST;
   const users = JSON.parse(localStorage.getItem('user') || '{}');
   const userId = users.id;
-  const PicLineUser = users.pictureUrl;
-
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchShops = async () => {
+    const fetchPartnerData = async () => {
       try {
-        setLoading(true);
-        const shopData = await getShopById(token, userId); 
+        setIsLoading(true);
+        const shopData = await getShopById(token, userId);
 
-        console.log('Fetched shop data:', shopData); 
+        console.log('Fetched shop data:', shopData);
 
         if (shopData && typeof shopData === 'object' && shopData.shop) {
-          setShops([shopData.shop]); // ดึงข้อมูลเฉพาะ shop
+          setShopData([shopData.shop]);
         } else {
           // กรณีไม่พบข้อมูลร้านค้า ให้เปลี่ยนไปหน้า ProfileStore
-          navigate('/PDPA');
+          // navigate('/PDPA');
         }
       } catch (error) {
-        setError('Error: Shop data is undefined or missing.');
-        navigate('/PDPA'); // เปลี่ยนไปหน้า ProfileStore เมื่อเกิดข้อผิดพลาด
+        setFetchError('Error: Shop data is undefined or missing.');
+        // navigate('/PDPA');
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    fetchShops();
-  }, [token, userId, navigate]);
+    fetchPartnerData();
+  }, [token, userId]);
 
-  console.log(PicLineUser);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (fetchError) return <p>{fetchError}</p>;
 
   return (
     <>
       <Header />
       <div className="mx-auto px-2">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
-          {shops.map((shop) => {
-            const shopDetails = shop || {}; // เข้าถึงรายละเอียดของ shop
+          {shopData.map((shop) => {
+            const shopDetails = shop || {};
+
             return (
-              <Link to="/partner/add-product" className="btn-link" key={shop.id}>
+              <Link to={`/partner/add-product`} key={shop.id}>
                 <div className="shop-2">
                   <span
-                    className="circle block w-full h-100 md:h-100 lg:h-100 rounded-lg"
+                    className="circle"
                     style={{
-                      backgroundImage: shop.backgroundImage 
-                        ? `url(${API_URL}${shop.backgroundImage})` 
+                      backgroundImage: shop.image?.data?.attributes?.url
+                        ? `url(${shop.image.data.attributes.url})`
                         : 'url(https://cdn.britannica.com/70/234870-050-D4D024BB/Orange-colored-cat-yawns-displaying-teeth.jpg)',
-                      backgroundSize: "cover", 
-                      backgroundPosition: "center", 
-                      aspectRatio: '1 / 1' 
+                      backgroundSize: "cover",
                     }}
                   ></span>
-
-                  <span className="pl-2 text-center block">{shopDetails.name || ''}</span>
+                  <span className="pl-2">{shop.name}</span>
                 </div>
               </Link>
             );
@@ -80,4 +71,4 @@ function ShopHome() {
   );
 }
 
-export default ShopHome;
+export default PartnerHome;
