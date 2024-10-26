@@ -102,8 +102,8 @@ function UpdateUserProfile() {
         });
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching users:", error);
-        setError(error.message);
+        // console.error("Error fetching users:", error);
+        // setError(error.message);
         setLoading(false);
       }
     };

@@ -34,7 +34,6 @@ export const updateUser = async (
 
 export const getUser = async (userId: string, token: string): Promise<User> => {
   if (!userId || !token) {
-    throw new Error("No userId or token provided. User must be authenticated.");
   }
 
   try {
@@ -53,12 +52,8 @@ export const getUser = async (userId: string, token: string): Promise<User> => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error fetching user:", errorData);
-      throw new Error(
-        `Request failed with status ${response.status}: ${
-          errorData?.error?.message || "Unknown error"
-        }`
-      );
+      // console.error("Error fetching user:", errorData);
+    
     }
     const data = await response.json();
 
@@ -90,7 +85,7 @@ export const getUser = async (userId: string, token: string): Promise<User> => {
 
     return user;
   } catch (error: any) {
-    console.error("Error fetching user:", error.message);
+    // console.error("Error fetching user:", error.message);
     throw error;
   }
 };
@@ -114,7 +109,7 @@ export const createUser = async (
       const errorData = await response.json();
       console.error("Error:", errorData);
       // alert('Error: ' + errorData.error.message);
-      throw new Error(`Request failed with status ${response.status}`);
+      // throw new Error(`Request failed with status ${response.status}`);
     }
 
     const data = await response.json();

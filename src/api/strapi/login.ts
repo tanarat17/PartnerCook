@@ -1,17 +1,33 @@
-// src/api/business/login.ts
-
 import { authenticateUser } from "../strapi/authApi";
 
-export const loginWithLineId = async (lineId: string) => {
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  provider: string;
+  confirmed: boolean;
+  blocked: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lineId: string;
+  backgroundImage?: string;
+  fullName: string;
+  gender?: string;
+  address?: string;
+  cardID?: string;
+  telNumber?: string;
+  userType?: string;
+  point: number;
+}
+
+export interface AuthResponse {
+  jwt: string;
+  user: User;
+}
+
+export const loginWithLineId = async (lineId: string): Promise<AuthResponse | null> => {
   const identifier = `cook${lineId}@cook.com`;
   const password = "cookcook";
-
-  console.log(
-    "loginWithLineId identifier :",
-    identifier,
-    "loginWithLineId password :",
-    password
-  );
 
   try {
     const result = await authenticateUser(identifier, password);
@@ -39,6 +55,6 @@ export const loginWithLineId = async (lineId: string) => {
     };
   } catch (error) {
     console.error("Authentication failed:", error.message);
-    return false;
+    return null; // คืนค่า null แทนการคืนค่า false เพื่อบ่งชี้ว่าล้มเหลว
   }
 };

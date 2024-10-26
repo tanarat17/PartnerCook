@@ -58,20 +58,19 @@ function ProfileStoreEdit() {
 
   const API_URL = import.meta.env.VITE_API_URL;
   const token =
-    localStorage.getItem("accessToken") || import.meta.env.VITE_TOKEN_TEST;
+  localStorage.getItem("accessToken") || import.meta.env.VITE_TOKEN_TEST;
   const users = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = users.id;
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchShops = async () => {
       try {
         setLoading(true);
-        const shopData = await getShopById(token, userId); // เรียก API
+        const shopData = await getShopById(token, userId);
         if (shopData && typeof shopData === "object") {
-          setShops([shopData]); // ตั้งค่า shops ด้วยข้อมูลที่ได้รับ
-          // อัปเดตค่าฟอร์มด้วยข้อมูลที่ได้รับ
+          setShops([shopData]);
+      
           setFormData({
             name: shopData.shop.name || "",
             fullName: shopData.fullName || "",
@@ -82,15 +81,25 @@ function ProfileStoreEdit() {
             image: shopData.shop.image || "",
             bookBankImage: shopData.shop.bookBankImage || "",
 
-            checkedOne: true, // กำหนดค่าตั้งต้นของ checkbox
+            checkedOne: true, 
           });
         } else {
           navigate("/ProfileStore");
-          setShops([]); // หาก shopData ไม่ถูกต้อง ให้ตั้งค่าเป็นอาเรย์ว่าง
+          setShops([]);
         }
       } catch (error) {
-        setError(error.message);
-      } finally {
+       
+        Swal.fire({
+          icon: 'warning',
+          text: 'กรุณาลงทะเบียนร้านค้า',
+          confirmButtonText: 'ตกลง',
+      }).then((result) => {
+          if (result.isConfirmed) {
+              navigate('/partner/PDPA');
+          }
+      });
+      
+    }finally {
         setLoading(false);
       }
     };
@@ -143,7 +152,6 @@ function ProfileStoreEdit() {
     e.preventDefault();
 
     try {
-      // แสดง SweetAlert เพื่อยืนยันการส่งฟอร์ม
       const result = await Swal.fire({
         text: "ต้องการบันทึกข้อมูลใช่หรือไม่ ?",
         icon: "warning",
@@ -154,8 +162,6 @@ function ProfileStoreEdit() {
 
       if (result.isConfirmed) {
         const response = await updateUserFromShop(token, userId, formData);
-
-        // แสดงข้อความสำเร็จ
         await Swal.fire({
           text: "ทำการแก้ไขข้อมูลร้านค้าเรียบร้อยแล้ว",
           icon: "success",

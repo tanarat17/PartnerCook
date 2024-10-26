@@ -52,6 +52,10 @@ export default function ProfileStore() {
   const [banks, setBanks] = useState([]); // สำหรับเก็บข้อมูลธนาคาร
   const [loading, setLoading] = useState(true);
 
+
+
+  console.log("ข้อมูลใน user:", JSON.stringify(user, null, 2));
+
   const handleInputChange = (e) => {
     const { id, name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -152,6 +156,11 @@ export default function ProfileStore() {
         cardID: formData.cardID,
         address: formData.location,
       };
+
+      console.log(userData);
+      console.log(userId);
+      console.log(token);
+
 
       // อัปเดตข้อมูลผู้ใช้
       const responseUser = await updateUserFromShop(token, userId, userData);

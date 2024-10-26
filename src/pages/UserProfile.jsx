@@ -84,8 +84,8 @@ function UserProfile() {
         setUser(userData);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching user data:", error);
-        setError(error.message);
+        // console.error("Error fetching user data:", error);
+        // setError(error.message);
         setLoading(false);
       }
     };

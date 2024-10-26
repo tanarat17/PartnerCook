@@ -3,11 +3,16 @@ import { Link } from "react-router-dom";
 import { getShopById } from "../../api/strapi/shopApi";
 import { useState, useEffect } from "react";
 import { Grid, TextField, Button, CircularProgress } from "@mui/material";
+import Swal from 'sweetalert2';
+import { useNavigate } from "react-router-dom";
+
 
 function PartnerHome() {
   const [shopData, setShopData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
+  const navigate = useNavigate();
+
 
   const token =
     localStorage.getItem("accessToken") || import.meta.env.VITE_TOKEN_TEST;
@@ -24,14 +29,21 @@ function PartnerHome() {
           setShopData([shopData.shop]);
         } else {
           // กรณีไม่พบข้อมูลร้านค้า ให้เปลี่ยนไปหน้า ProfileStore
-          // navigate('/PDPA');
+         // navigate('partner/PDPA');
         }
       } catch (error) {
-        setFetchError("Error: Shop data is undefined or missing.");
-        // navigate('/PDPA');
-      } finally {
+        Swal.fire({
+          icon: 'warning',
+          text: 'กรุณาลงทะเบียนร้านค้า',
+          confirmButtonText: 'ตกลง',
+      }).then((result) => {
+          if (result.isConfirmed) {
+              navigate('/partner/PDPA'); 
+          }
+      });
+    } finally {
         setIsLoading(false);
-      }
+    }
     };
 
     fetchPartnerData();
