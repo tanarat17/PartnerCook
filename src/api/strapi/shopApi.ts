@@ -81,7 +81,7 @@ export const getShopsByUserID = async (token, shopId) => {
     }
     const data = await response.json();
   } catch (error) {
-    console.error("Error fetching shop by ID:", error);
+    // console.error("Error fetching shop by ID:", error);
     throw error;
   }
 };
@@ -124,7 +124,7 @@ export const getShopById = async (token, userId) => {
 
     return data;
   } catch (error) {
-    console.error("Error fetching shop by ID:", error);
+    // console.error("Error fetching shop by ID:", error);
     throw error;
   }
 };
@@ -147,14 +147,14 @@ export const createShop = async (
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error creating shop:", errorData);
+      // console.error("Error creating shop:", errorData);
       throw new Error(`Request failed with status ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error creating shop:", error.message);
+    // console.error("Error creating shop:", error.message);
     throw error;
   }
 };
@@ -178,14 +178,14 @@ export const updateUserFromShop = async (
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error updating UserFromShop:", errorData);
+      // console.error("Error updating UserFromShop:", errorData);
       throw new Error(`Request failed with status ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error updating UserFromShop:", error.message);
+    // console.error("Error updating UserFromShop:", error.message);
     throw error;
   }
 };
@@ -206,7 +206,7 @@ export const getAllShopById = async (
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error fetching products:", errorData);
+      // console.error("Error fetching products:", errorData);
       throw new Error(
         `Request failed with status ${response.status}: ${
           errorData.message || "Unauthorized"
@@ -217,14 +217,14 @@ export const getAllShopById = async (
     const data = await response.json();
 
     if (!data.data || !Array.isArray(data.data)) {
-      console.error("Fetched data is not an array:", data);
+      // console.error("Fetched data is not an array:", data);
       throw new Error("Invalid data format");
     }
 
     const products: Product[] = data.data.map((item: any, index: number) => {
-      console.log(`Processing product ${index}:`, item);
+      // console.log(`Processing product ${index}:`, item);
       if (!item || typeof item !== "object") {
-        console.error(`Invalid product at index ${index}:`, item);
+        // console.error(`Invalid product at index ${index}:`, item);
         throw new Error(`Invalid product data at index ${index}`);
       }
 
@@ -255,7 +255,7 @@ export const getAllShopById = async (
 
     return products;
   } catch (error: any) {
-    console.error("Error fetching products:", error.message);
+    // console.error("Error fetching products:", error.message);
     throw error;
   }
 };
@@ -278,14 +278,14 @@ export const updateShop = async (
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error updating shop:", errorData);
+      // console.error("Error updating shop:", errorData);
       throw new Error(`Request failed with status ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error updating shop:", error.message);
+    // console.error("Error updating shop:", error.message);
     throw error;
   }
 };
@@ -303,13 +303,13 @@ export const getBank = async (token: string): Promise<Bank[]> => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error fetching banks:", errorData);
+      // console.error("Error fetching banks:", errorData);
       throw new Error(`Request failed with status ${response.status}`);
     }
 
     const data = await response.json();
     if (!data || !data.data) {
-      console.error("No data found in response");
+      // console.error("No data found in response");
       return [];
     }
 
@@ -323,7 +323,7 @@ export const getBank = async (token: string): Promise<Bank[]> => {
 
     return banksData;
   } catch (error) {
-    console.error("Error fetching banks:", error.message);
+    // console.error("Error fetching banks:", error.message);
     throw error;
   }
 };
@@ -342,14 +342,14 @@ export const fetchShopInvoices = async (shopId) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error fetching invoices:", errorData);
+      // console.error("Error fetching invoices:", errorData);
       throw new Error(`Request failed with status ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching invoices:", error);
+    // console.error("Error fetching invoices:", error);
     throw error;
   }
 };
@@ -366,7 +366,7 @@ export const fetchShopRedeem = async (shopId) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error fetching redeem data:", errorData);
+      // console.error("Error fetching redeem data:", errorData);
       throw new Error(`Request failed with status ${response.status}`);
     }
 
@@ -400,7 +400,7 @@ export const UpdateRedeems = async (id, data) => {
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error("Error updating redeem:", error);
+    // console.error("Error updating redeem:", error);
     throw error;
   }
 };

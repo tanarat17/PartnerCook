@@ -42,19 +42,22 @@ const App = () => {
             navigate("/Login");
           } else {
             const { jwt, user } = response;
-            localStorage.setItem("accessToken", jwt);
-            localStorage.setItem("user", JSON.stringify(user));
-            navigate("/partner/shopHome");
+                        localStorage.setItem('accessToken', jwt);
+                        localStorage.setItem('user', JSON.stringify(user));
+                        // console.log('Token and user data saved to localStorage');
+                        navigate('/partner/shopHome');
           }
         } else {
           liffSdk.login();
         }
       } catch (err) {
-        console.error("Initialization or login error:", err);
-        setErrorMessage("Initialization or login error. Please try again.");
+        // console.error("Initialization or login error:", err);
+        // setErrorMessage("Initialization or login error. Please try again.");
+        window.location.reload(); // Reload หน้าเว็บ
       } finally {
         setLoading(false);
       }
+      
     };
 
     initializeLiff();

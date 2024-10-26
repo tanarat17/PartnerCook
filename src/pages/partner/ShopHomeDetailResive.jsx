@@ -93,6 +93,8 @@ function ShopHomeDetailResive() {
       try {
         const shopData = await getShopById(token, userId);
 
+
+        console.log(shopData);
         if (shopData && shopData.shop && shopData.shop.redeems) {
           setRedeems(shopData.shop.redeems);
         } else {

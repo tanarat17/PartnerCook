@@ -24,6 +24,14 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 export default function ProfileStore() {
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : {};
+  });
+
+  useEffect(() => {
+  }, [user]);
+
   const theme = createTheme({
     typography: {
       fontFamily: "Sarabun !important",
@@ -45,16 +53,27 @@ export default function ProfileStore() {
   const [isFormValid, setIsFormValid] = useState(false);
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337"; // เปลี่ยนเป็น port ที่ถูกต้อง
+  // const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1337";
+
   const token = localStorage.getItem("accessToken");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const userId = user.id; // ดึง user ID จากข้อมูลผู้ใช้ที่เก็บไว้
+if (!token) {
+  // console.error("Access token not found");
+}
+
+  // ใช้ user ที่ถูกกำหนดไว้
+  const userId = user.id;
   const displayName = user.fullName; // ดึง displayName จากข้อมูลผู้ใช้ที่เก็บไว้
   const [banks, setBanks] = useState([]); // สำหรับเก็บข้อมูลธนาคาร
   const [loading, setLoading] = useState(true);
 
+ 
 
+  const [rate, setRate] = useState(() => {
+    const storedRate = JSON.parse(window.sessionStorage.getItem('rate'));
+    return storedRate !== null && storedRate !== undefined ? storedRate : '';
+  });
 
-  console.log("ข้อมูลใน user:", JSON.stringify(user, null, 2));
+  
 
   const handleInputChange = (e) => {
     const { id, name, value, type, checked } = e.target;
@@ -79,7 +98,7 @@ export default function ProfileStore() {
         const response = await getBank(token);
         setBanks(response);
       } catch (error) {
-        console.error("Error fetching banks:", error);
+        // console.error("Error fetching banks:", error);
       } finally {
         setLoading(false);
       }
@@ -157,15 +176,15 @@ export default function ProfileStore() {
         address: formData.location,
       };
 
-      console.log(userData);
-      console.log(userId);
-      console.log(token);
+      // console.log(userData);
+      // console.log(userId);
+      // console.log(token);
 
 
       // อัปเดตข้อมูลผู้ใช้
       const responseUser = await updateUserFromShop(token, userId, userData);
       if (!responseUser || responseUser.error) {
-        console.error("Error updating user:", responseUser);
+        // console.error("Error updating user:", responseUser);
       }
 
       // เตรียมข้อมูลร้านค้า
@@ -203,7 +222,7 @@ export default function ProfileStore() {
         throw new Error("Shop registration failed.");
       }
     } catch (error) {
-      console.error("Error during submission:", error);
+      // console.error("Error during submission:", error);
       Swal.fire({
         icon: "error",
         position: "center",

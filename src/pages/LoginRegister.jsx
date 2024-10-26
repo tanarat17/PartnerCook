@@ -18,8 +18,10 @@ const LoginRegister = () => {
     navigate('/register'); // เปลี่ยนไปที่หน้า Register
   };
 
-  const handleLogin = () => {
-    navigate('/Login'); // เปลี่ยนไปที่หน้า App
+  const handleLogin = async () => {
+    const token = await loginUser();
+    localStorage.setItem("accessToken", token);
+    console.log("Access token saved:", token); // ตรวจสอบที่นี่
   };
   if (loading) {
     return <CircularProgress />;

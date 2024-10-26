@@ -84,7 +84,7 @@ function ProfileStoreEdit() {
             checkedOne: true, 
           });
         } else {
-          navigate("/ProfileStore");
+          // navigate("/ProfileStore");
           setShops([]);
         }
       } catch (error) {

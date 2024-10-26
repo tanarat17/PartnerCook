@@ -15,7 +15,7 @@ function PartnerHome() {
 
 
   const token =
-    localStorage.getItem("accessToken") || import.meta.env.VITE_TOKEN_TEST;
+  localStorage.getItem("accessToken") || import.meta.env.VITE_TOKEN_TEST;
   const users = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = users.id;
 
@@ -29,7 +29,7 @@ function PartnerHome() {
           setShopData([shopData.shop]);
         } else {
           // กรณีไม่พบข้อมูลร้านค้า ให้เปลี่ยนไปหน้า ProfileStore
-         // navigate('partner/PDPA');
+        //  navigate('/partner/PDPA');
         }
       } catch (error) {
         Swal.fire({
